@@ -1,0 +1,69 @@
+<div class="userListBody">
+    <h3>Available Punters</h3>
+  
+    <table class="table hoverTable">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Balance</th>
+        <th scope="col" [hidden]="meeting"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of users; let i = index;">
+        <td>{{i+1}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.balance}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div>
+      <a class="btn btn-primary" data-toggle="modal" data-target="#addPlayerForm">Add Player</a>
+    </div>
+
+  </div>
+
+<div class="modal fade" id="addPlayerForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Add Player to RaceNight</h4>
+        <button type="button" id="closeUserModelButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <form (ngSubmit)="submitUser()" class="form-horizontal" #userForm="ngForm">
+             <fieldset>     
+                 <div class="form-group">
+                    <div class="md-form mb-2"> 
+                      <label data-error="wrong" data-success="right" for="userNameInput"><i class="fas fa-user prefix grey-text"></i>User name</label>
+                      <input [(ngModel)]="userModel.name" name="userName" type="text" id="userNameInput" class="form-control validate" required>
+                     
+                    </div>
+                 </div>
+                <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="userEmailInput"> <i class="fas fa-phone prefix grey-text"></i>User email</label>
+                      <input [(ngModel)]="userModel.email" name="userEmail" type="email" id="userEmailInput" class="form-control validate" required>
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="userBalanceInput"> <i class="fas fa-phone prefix grey-text"></i>User Balance</label>
+                      <input [(ngModel)]="userModel.balance" name="userBalance" type="number" id="userBalanceInput" class="form-control validate" required>
+                    </div>
+                 </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Register User</button>
+            </div>
+        </form>
+
+      </div>
+    
+    </div>
+  </div>
+</div>

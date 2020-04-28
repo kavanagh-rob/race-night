@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+.hoverTable tbody tr:hover {
+  background-color: #ffff99;
+  cursor: pointer;
+}
+
+.hoverTable .highlighted {
+  background-color: #14ad19;
+  color: darkred;
+}
+
