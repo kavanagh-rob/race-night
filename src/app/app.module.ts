@@ -12,6 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { PlayerResolver } from './shared/resolvers/player-resolver';
 import { RaceResolver } from './shared/resolvers/race-resolver';
 import { LiveOddsComponent } from './components/live-odds/live-odds.component';
+import { TwoDecimalDirective } from './shared/two-decimal.directive';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatTabsModule} from '@angular/material/tabs';
 
 const appRoutes: Routes = [
   {
@@ -42,7 +45,8 @@ const appRoutes: Routes = [
     PageNotFoundComponent,
     UserListComponent,
     PlayerHomeComponent,
-    LiveOddsComponent
+    LiveOddsComponent,
+    TwoDecimalDirective
   ],
   imports: [
     RouterModule.forRoot(
@@ -53,7 +57,9 @@ const appRoutes: Routes = [
     RouterModule.forChild( appRoutes),
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatTabsModule
   ],
   providers: [DataService, PlayerResolver, RaceResolver],
   bootstrap: [AppComponent]

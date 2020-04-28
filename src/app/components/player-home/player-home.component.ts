@@ -19,19 +19,27 @@ export class PlayerHomeComponent implements OnInit {
   }
   user;
   raceInfo;
+  userBetsList;
   betslip: any = {};
   balanceError = false;
+  stakeError = false;
   raceExpiredError = false;
   totalBetValue = 0;
 
   requestBet() {
     this.balanceError = false;
+    this.stakeError = false;
     this.raceExpiredError = false;
     this.betslip.meetingId = this.raceInfo.meetingId;
     this.betslip.raceNumber = this.raceInfo.raceNumber;
     this.betslip.userId = this.user.userId;
     this.betslip.userName = this.user.name;
     this.betslip.userBalance = this.user.balance;
+
+    if (this.betslip.stake < 1) {
+      this.stakeError = true;
+      return;
+    }
 
     this.dataService.getUserById(this.user.userId).then(res => {
       this.user = res.Item;
@@ -54,9 +62,14 @@ export class PlayerHomeComponent implements OnInit {
     betsQueryData.table_name = this.raceInfo.dbBetTableName;
     this.dataService.queryBets(betsQueryData).then(res => {
       this.calculateCurrentOdds(res.Items);
+      this.getUserBets(res.Items);
     });
   }
 
+  getUserBets(betList){
+    this.userBetsList = betList.filter(
+      bets => bets.userId === this.user.userId);
+  }
   calculateCurrentOdds(betList){
     this.totalBetValue = 0;
     const raceBets = this.filterBetsForRace(betList);
@@ -79,10 +92,11 @@ export class PlayerHomeComponent implements OnInit {
       const betsForHorse = raceBets.filter(
         bets => bets.horseNumber === horse.number);
       betsForHorse.forEach(betForHorse => {
-          betTotalForHorse = betTotalForHorse + betForHorse.stake;
+          betTotalForHorse = betTotalForHorse + Number(betForHorse.stake);
         });
       horse.totalBetsForHorse = betTotalForHorse;
-      this.totalBetValue =  this.totalBetValue + betTotalForHorse;
+      this.totalBetValue =  Number(this.totalBetValue) + Number(betTotalForHorse);
+      console.log(this.totalBetValue);
     });
     this.getLiveToteOdds();
   }
@@ -90,13 +104,15 @@ export class PlayerHomeComponent implements OnInit {
   getLiveToteOdds() {
     const currentHorse = this.raceInfo.horses.forEach(
       horse => {
-        horse.liveOdds = horse.totalBetsForHorse === 0 ? this.totalBetValue : this.totalBetValue / horse.totalBetsForHorse;
+        horse.liveOdds = horse.totalBetsForHorse === 0 ?
+        this.totalBetValue : (Math.round(this.totalBetValue / Number(horse.totalBetsForHorse) * 100) / 100).toFixed(2);
           });
   }
 
   setSelectedHorse(horse){
     this.balanceError = false;
     this.raceExpiredError = false;
+    this.stakeError = false;
     this.betslip.horseNumber = horse.number;
     this.betslip.horseName = horse.name;
   }

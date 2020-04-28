@@ -1,28 +1,62 @@
 <h1>Hello {{user.name}}</h1>
 <h2>Your Current Balance is €{{user.balance}}</h2>
-<h2>Total Bets placed on this Race is <strong>€{{totalBetValue}}</strong></h2>
+<h3>The Next Live Race is Race {{betslip.raceNumber}}</h3>
 
 <br/>
 
-<h2>Race Card</h2>
-<table class="table hoverTable">
-    <thead>
-        <tr>
-            <th scope="col">Horse Number</th>
-            <th scope="col">Horse Name</th>
-            <th scope="col">Profit per €</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let horse of raceInfo.horses;">
-            <td>{{horse.number}}</td>
-            <td>{{horse.name}}</td>
-            <td>{{horse.liveOdds}}</td>
-            <td><button data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button></td>
-        </tr>
-    </tbody>
-</table>
+<mat-tab-group>
+    <mat-tab label="Betting">
+        <h5>Total Bets placed on this Race is <strong>€{{totalBetValue}}</strong></h5>
+        <h5>Race Card</h5>
+        <table class="table hoverTable">
+            <thead>
+                <tr>
+                    <th scope="col">Horse Number</th>
+                    <th scope="col">Horse Name</th>
+                    <th scope="col">Return per €</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let horse of raceInfo.horses;">
+                    <td>{{horse.number}}</td>
+                    <td>{{horse.name}}</td>
+                    <td>{{horse.liveOdds}}</td>
+                    <td><button data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-tab>
+    <mat-tab label="Transactions">
+            <br/>
+            <table class="table hoverTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Race Number</th>
+                            <th scope="col">Horse Name</th>
+                            <th scope="col">Horse Number</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Return</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let bet of userBetsList;">
+                            <td>{{bet.raceNumber}}</td>
+                            <td>{{bet.horseName}}</td>
+                            <td>{{bet.horseNumber}}</td>
+                            <td>{{bet.stake}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+    </mat-tab>
+    <mat-tab label="RaceCard">
+    </mat-tab>
+</mat-tab-group>
+
 
 <div class="modal fade" id="placeBetForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
@@ -43,7 +77,7 @@
                  <div class="form-group">
                     <div class="md-form mb-3">
                       <label data-error="wrong" data-success="right" for="betAmountInput"> <i class="fas fa-phone prefix grey-text"></i>Stake (€)</label>
-                      <input [(ngModel)]="betslip.stake" name="betAmountInput" type="number" id="betAmountInput" class="form-control validate" required>
+                      <input [(ngModel)]="betslip.stake" name="betAmountInput" type="textbox" id="betAmountInput" class="form-control validate" required appTwoDecimal>
                     </div>
                  </div>
           </fieldset>
@@ -58,6 +92,9 @@
         <div [hidden]="!raceExpiredError" class="alert alert-error box-msg" role="alert">
             <strong>Sorry!</strong> Sorry this race has Expired
         </div>    
+        <div [hidden]="!stakeError" class="alert alert-error box-msg" role="alert">
+                <strong>Sorry!</strong> The Stake is too low
+        </div> 
       </div>
     
     </div>
