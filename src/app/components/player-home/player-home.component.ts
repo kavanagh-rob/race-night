@@ -26,6 +26,7 @@ export class PlayerHomeComponent implements OnInit {
   stakeError = false;
   raceExpiredError = false;
   totalBetValue = 0;
+  buttonClicked = false;
 
   ngOnInit(): void {
     if (this.user === undefined){
@@ -53,9 +54,9 @@ export class PlayerHomeComponent implements OnInit {
     this.betslip.raceNumber = this.raceInfo.raceNumber;
     this.betslip.userId = this.user.userId;
     this.betslip.userName = this.user.name;
-    this.betslip.userBalance = this.user.balance;
+    this.betslip.userBalance = this.setTwoDecimals(this.user.balance);
 
-    if (this.betslip.stake < 1) {
+    if (Number(this.betslip.stake) < 1) {
       this.stakeError = true;
       return;
     }
@@ -134,6 +135,7 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   setSelectedHorse(horse){
+    this.buttonClicked = false;
     this.balanceError = false;
     this.raceExpiredError = false;
     this.stakeError = false;

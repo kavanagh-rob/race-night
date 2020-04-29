@@ -3,6 +3,7 @@ export class User {
       public userId: string,
       public name: string,
       public email: string,
-      public balance: number
+      public balance: number,
+      public payments: any []
     ) {  }
   }

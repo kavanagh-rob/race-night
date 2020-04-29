@@ -9,7 +9,6 @@ import {DataService} from '../../shared/services/data.service';
 export class AdminPageComponent implements OnInit {
 
   constructor(private dataService: DataService) { }
-  users;
   allBets;
   currentRaceInfo;
   raceResultsList;
@@ -17,13 +16,24 @@ export class AdminPageComponent implements OnInit {
   noWinnerError = false;
 
 ngOnInit() {
-    this.loadUsers();
     this.loadRaceResults();
 }
 
-loadUsers() {
-  this.dataService.getAllUsers().then(res => { // Success
-    this.users = res.Items;
+loadRaceResults() {
+  this.dataService.getLiveRaceInfo().then(raceInfoData => {
+    this.currentRaceInfo = raceInfoData;
+    this.getSubmittedResults();
+  });
+}
+
+getSubmittedResults() {
+  const resultsRequestData: any = {};
+  resultsRequestData.table_name = this.currentRaceInfo.dbResultTableName;
+  this.dataService.scanTableInfo(resultsRequestData).then(raceInfoData => {
+    if (raceInfoData && raceInfoData.Items){
+      this.raceResultsList = raceInfoData.Items;
+    }
+    this.loadBets();
   });
 }
 
@@ -40,11 +50,11 @@ loadBets() {
 setBetResultInfo() {
   this.allBets.forEach(bet => {
     // change this for no stats check
-    if (!bet.status || bet.status === 'PENDING'){
+    if (bet.status === 'N/A' || bet.status === 'PENDING'){
       const startingPrice = this.getHorseOdds(bet.raceNumber, bet.horseNumber);
       bet.finalOdds = startingPrice;
       bet.status = this.getBetStatus(bet.raceNumber, bet.horseNumber);
-      bet.payout = bet.status === 'WIN' ? Number(bet.finalOdds) * Number(bet.stake) : 0;
+      bet.payout = bet.status === 'WIN' ? this.setTwoDecimals(Number(bet.finalOdds) * Number(bet.stake)) : 0;
     }
   });
 }
@@ -75,36 +85,47 @@ processBetsForRace(raceNumber) {
     return;
   }
   else{
-    const betsForRace = this.allBets.filter(
-      bets => bets.raceNumber === raceNumber);
+    const openBetsForRace = this.allBets.filter(
+      bet => {
+        if (bet.raceNumber !== raceNumber || bet.isProcessed) {
+          return false;
+        }
+        return true;
+        });
 
-    betsForRace.forEach(
-        bet => {
+    openBetsForRace.forEach(
+        openBet => {
+          openBet.isProcessed = true;
           const betData: any = {};
+          betData.item = openBet;
           betData.table_name = this.currentRaceInfo.dbBetTableName;
-          betData.item = bet;
             // submit bet
           this.dataService.putTableInfo(betData).then(resp => {
-            if (bet.status === 'WIN'){
-              this.payUser(bet.userId, bet.payout);
+            if (openBet.status === 'WIN'){
+              this.payUser(openBet);
             }
           });
       });
   }
 }
 
-payUser(userId, payout) {
-  this.dataService.getUserById(userId).then(res => {
+payUser(openBet) {
+  this.dataService.getUserById(openBet.userId).then(res => {
     const user = res.Item;
-    const balance = Number(user.balance) + Number(payout);
+    const balance = Number(user.balance) + Number(openBet.payout);
     const userData: any = {};
-    user.balance = Number(user.balance) + Number(payout);
+    user.balance = Number(user.balance) + Number(openBet.payout);
     userData.item = user;
     userData.table_name = 'RN_Users';
 
     // update user balance
     this.dataService.putTableInfo(userData).then(resp => {
-      // console.log(user.name+ 'paid');
+      openBet.paymentStatus = 'complete';
+      const betData: any = {};
+      betData.item = openBet;
+      betData.table_name = this.currentRaceInfo.dbBetTableName;
+      this.dataService.putTableInfo(betData).then(closeBetResp => {
+      });
     });
 
   });
@@ -124,24 +145,6 @@ getDistinctRaces(betList) {
   .filter((value, index, self) => self.indexOf(value) === index);
 }
 
-loadRaceResults() {
-  this.dataService.getLiveRaceInfo().then(raceInfoData => {
-    this.currentRaceInfo = raceInfoData;
-    this.getSubmittedResults();
-  });
-}
-
-getSubmittedResults() {
-  const resultsRequestData: any = {};
-  resultsRequestData.table_name = this.currentRaceInfo.dbResultTableName;
-  this.dataService.scanTableInfo(resultsRequestData).then(raceInfoData => {
-    if (raceInfoData && raceInfoData.Items){
-      this.raceResultsList = raceInfoData.Items;
-    }
-    this.loadBets();
-  });
-}
-
 getResultForRace(raceNumber){
   return this.raceResultsList.filter(
     result => result.raceInfo.raceNumber === raceNumber);
@@ -153,16 +156,8 @@ getHorseOdds(raceNumber, horseNumber){
     horse => horse.number === horseNumber)[0].liveOdds;
 }
 
-
-// submitUser() {
-//   const data: any = {};
-//   data.item = this.userModel;
-//   data.table_name = 'RN_Users';
-//   this.dataService.putTableInfo(data).then(res => { // Success
-//     document.getElementById('closeUserModelButton').click();
-//     this.loadUsers();
-//   });
-// }
-
+setTwoDecimals(input){
+  return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
+}
 
 }

@@ -7,7 +7,7 @@
         <th scope="col">#</th>
         <th scope="col">Name</th>
         <th scope="col">Balance</th>
-        <th scope="col" [hidden]="meeting"></th>
+        <th scope="col"></th>
       </tr>
       </thead>
       <tbody>
@@ -15,6 +15,7 @@
         <td>{{i+1}}</td>
         <td>{{user.name}}</td>
         <td>{{user.balance}}</td>
+        <td><button (click)="topUpUser(user)"  data-toggle="modal" data-target="#topUpUserForm"  class="btn btn-primary">Top Balance for user {{user.name}}</button></td>
       </tr>
       </tbody>
     </table>
@@ -44,12 +45,6 @@
                      
                     </div>
                  </div>
-                <div class="form-group">
-                    <div class="md-form mb-3">
-                      <label data-error="wrong" data-success="right" for="userEmailInput"> <i class="fas fa-phone prefix grey-text"></i>User email</label>
-                      <input [(ngModel)]="userModel.email" name="userEmail" type="email" id="userEmailInput" class="form-control validate" required>
-                    </div>
-                 </div>
                  <div class="form-group">
                     <div class="md-form mb-3">
                       <label data-error="wrong" data-success="right" for="userBalanceInput"> <i class="fas fa-phone prefix grey-text"></i>User Balance</label>
@@ -61,9 +56,41 @@
                 <button type="submit" class="btn btn-dark">Register User</button>
             </div>
         </form>
-
       </div>
-    
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="topUpUserForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Top Up Player</h4>
+        <button type="button" id="closeTopUpModelButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <form (ngSubmit)="submitTopUpForUser()" class="form-horizontal" #topUpForm="ngForm">
+            <fieldset>     
+                 <div class="form-group">
+                    <div class="md-form mb-2"> 
+                      <h5>User name {{userToTopUp.name}}</h5>
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="topUpInput"> <i class="fas fa-phone prefix grey-text"></i>Top Up Amount</label>
+                      <input [(ngModel)]="topUpAmount" name="topUpInput" type="number" id="topUpInput" class="form-control validate" required>
+                    </div>
+                 </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Top Up User</button>
+            </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

@@ -119,7 +119,4 @@ export class RaceResultComponent implements OnInit {
     });
   }
 
-
-
-
 }
