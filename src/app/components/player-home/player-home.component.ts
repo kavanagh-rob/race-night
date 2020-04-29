@@ -18,6 +18,7 @@ export class PlayerHomeComponent implements OnInit {
     this.raceInfo = this.route.snapshot.data[resloveLiveRace];
   }
   user;
+  interval: any;
   raceInfo;
   userBetsList;
   betslip: any = {};
@@ -26,10 +27,28 @@ export class PlayerHomeComponent implements OnInit {
   raceExpiredError = false;
   totalBetValue = 0;
 
+  ngOnInit(): void {
+    if (this.user === undefined){
+      this.router.navigate(['/pageNotFound']);
+    }
+    this.getCurentBetsForRace();
+    this.interval = setInterval(() => {
+        this.refreshData();
+    }, 5000);
+  }
+
+  refreshData() {
+    this.dataService.getLiveRaceInfo().then(raceInfoData => {
+      this.raceInfo = raceInfoData;
+      this.getCurentBetsForRace();
+    });
+  }
+
   requestBet() {
     this.balanceError = false;
     this.stakeError = false;
     this.raceExpiredError = false;
+    this.betslip.status = 'PENDING';
     this.betslip.meetingId = this.raceInfo.meetingId;
     this.betslip.raceNumber = this.raceInfo.raceNumber;
     this.betslip.userId = this.user.userId;
@@ -43,11 +62,12 @@ export class PlayerHomeComponent implements OnInit {
 
     this.dataService.getUserById(this.user.userId).then(res => {
       this.user = res.Item;
-      if ( this.user.balance < this.betslip.stake ) {
+      if ( Number(this.user.balance) < Number(this.betslip.stake)) {
         this.balanceError = true;
         return;
       }
       this.dataService.getLiveRaceInfo().then(raceInfoData => {
+        this.raceInfo = raceInfoData;
         if (raceInfoData.isActive){
           this.placeBet();
         }else{
@@ -95,9 +115,9 @@ export class PlayerHomeComponent implements OnInit {
           betTotalForHorse = betTotalForHorse + Number(betForHorse.stake);
         });
       horse.totalBetsForHorse = betTotalForHorse;
-      this.totalBetValue =  Number(this.totalBetValue) + Number(betTotalForHorse);
-      console.log(this.totalBetValue);
+      this.totalBetValue = Number(this.totalBetValue) + Number(betTotalForHorse);
     });
+    this.totalBetValue = this.setTwoDecimals(this.totalBetValue);
     this.getLiveToteOdds();
   }
 
@@ -105,8 +125,12 @@ export class PlayerHomeComponent implements OnInit {
     const currentHorse = this.raceInfo.horses.forEach(
       horse => {
         horse.liveOdds = horse.totalBetsForHorse === 0 ?
-        this.totalBetValue : (Math.round(this.totalBetValue / Number(horse.totalBetsForHorse) * 100) / 100).toFixed(2);
+        this.setTwoDecimals(this.totalBetValue) : this.setTwoDecimals(Number(this.totalBetValue) / Number(horse.totalBetsForHorse));
           });
+  }
+
+  setTwoDecimals(input){
+    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
   }
 
   setSelectedHorse(horse){
@@ -119,7 +143,7 @@ export class PlayerHomeComponent implements OnInit {
 
   placeBet() {
     const userData: any = {};
-    this.user.balance = this.user.balance - this.betslip.stake;
+    this.user.balance = Number(this.user.balance) - Number(this.betslip.stake);
     userData.item = this.user;
     userData.table_name = 'RN_Users';
 
@@ -135,13 +159,6 @@ export class PlayerHomeComponent implements OnInit {
         location.reload();
       });
     });
-  }
-
-  ngOnInit(): void {
-    if (this.user === undefined){
-      this.router.navigate(['/pageNotFound']);
-    }
-    this.getCurentBetsForRace();
   }
 
 }

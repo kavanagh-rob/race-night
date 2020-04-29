@@ -1,0 +1,33 @@
+<table class="table hoverTable">
+    <thead>
+        <tr>
+            <th scope="col">Horse Number</th>
+            <th scope="col">Horse Name</th>
+            <th scope="col">Return per €</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let horse of raceInfo.horses;">
+            <td>{{horse.number}}</td>
+            <td>{{horse.name}}</td>
+            <td>{{horse.liveOdds}}</td>
+            <td><button (click)="setRaceWinner(horse)" class="btn btn-primary">Set Winner</button></td>
+        </tr>
+    </tbody>
+</table>
+<div class="text-center">
+    <div [hidden]="!existingResultError" class="box-msg" role="alert">
+            <h1><strong>Warning!</strong> A Result has already been submitted for this race</h1>
+        </div>
+    <div [hidden]="!raceActiveError" class="box-msg" role="alert">
+            <h1><strong>Warning!</strong> The race is still active</h1>
+        </div>
+    <div [hidden]="!raceResult.resultId" class="alert alert-error box-msg" role="alert">
+        <h3 class="modal-title w-100 font-weight-bold">Confirm Results</h3>
+        <h3 class="modal-title w-100 font-weight-bold">Race Number: {{raceInfo.raceNumber}}</h3>
+        <h3 class="modal-title w-100 font-weight-bold">Horse Number: {{raceResult.winningHorseNumber}}</h3>
+        <h3 class="modal-title w-100 font-weight-bold">Horse Name: {{raceResult.winningHorseName}}</h3>
+        <h3 class="modal-title w-100 font-weight-bold">Horse Odds: {{raceResult.winningHorseOdds}}</h3>
+        <button (click)="submitRaceResults()"  class="btn btn-primary">Submit Race Result</button>
+    </div>
+</div>

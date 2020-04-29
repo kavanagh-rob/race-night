@@ -45,6 +45,12 @@ export class DataService {
       .catch(this.handleErrorPromise);
   }
 
+  scanTableInfo(data: any) {
+    return this.http.post(`${environment.apiUrl}/tableinfo`, data)
+      .toPromise()
+      .then(this.extractData)
+      .catch(this.handleErrorPromise);
+  }
 
   queryBets(data: any){
     return this.http.post(`${environment.apiUrl}/bets`, data)

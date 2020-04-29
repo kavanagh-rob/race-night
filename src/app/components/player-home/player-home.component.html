@@ -1,6 +1,7 @@
 <h1>Hello {{user.name}}</h1>
 <h2>Your Current Balance is €{{user.balance}}</h2>
-<h3>The Next Live Race is Race {{betslip.raceNumber}}</h3>
+<h3>Race {{raceInfo.raceNumber}}</h3>
+<h4>Race Status is {{raceInfo.isActive ? 'Active' : 'bettingSuspended' }}</h4>
 
 <br/>
 
@@ -37,8 +38,8 @@
                             <th scope="col">Horse Number</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Status</th>
+                            <th scope="col">SP</th>
                             <th scope="col">Return</th>
-                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,8 +48,9 @@
                             <td>{{bet.horseName}}</td>
                             <td>{{bet.horseNumber}}</td>
                             <td>{{bet.stake}}</td>
-                            <td></td>
-                            <td></td>
+                            <td>{{bet.status}}</td>
+                            <td>{{bet.finalOdds}}</td>
+                            <td>{{bet.payout}}</td>
                         </tr>
                     </tbody>
                 </table>

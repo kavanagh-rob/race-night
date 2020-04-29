@@ -1,0 +1,43 @@
+<h2>Admin Page</h2>
+
+<mat-tab-group>
+    <mat-tab label="Payout Bets">
+        <h5>Race Card</h5>
+        <div *ngFor="let raceNumber of raceList;">
+                <h4>Race {{raceNumber}} </h4>
+                    <table class="table hoverTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Race Number</th>
+                                    <th scope="col">User ID</th>
+                                    <th scope="col">Horse Name</th>
+                                    <th scope="col">Horse Number</th>
+                                    <th scope="col">Stake</th>
+                                    <th scope="col">Odds</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Return</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let bet of getBetsForRace(raceNumber);">
+                                    <td>{{bet.raceNumber}}</td>
+                                    <td>{{bet.userId}}</td>
+                                    <td>{{bet.horseName}}</td>
+                                    <td>{{bet.horseNumber}}</td>
+                                    <td>{{bet.stake}}</td>
+                                    <td>{{bet.finalOdds}}</td>
+                                    <td>{{bet.status}}</td>
+                                    <td>{{bet.payout}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                <button (click)="processBetsForRace(raceNumber)"  class="btn btn-primary">Process Bets for Race {{raceNumber}}</button>
+            </div>
+    </mat-tab>
+    <mat-tab label="Submit Race Results">
+        <app-race-result></app-race-result>
+    </mat-tab>
+</mat-tab-group>
+
+
+

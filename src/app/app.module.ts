@@ -15,6 +15,8 @@ import { LiveOddsComponent } from './components/live-odds/live-odds.component';
 import { TwoDecimalDirective } from './shared/two-decimal.directive';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatTabsModule} from '@angular/material/tabs';
+import { AdminPageComponent } from './components/admin-page/admin-page.component';
+import { RaceResultComponent } from './components/race-result/race-result.component';
 
 const appRoutes: Routes = [
   {
@@ -29,8 +31,12 @@ const appRoutes: Routes = [
       resloveLiveRace: RaceResolver
     },
   },
+  {
+    path: 'admin-page',
+    component: AdminPageComponent,
+  },
   { path: '',
-    redirectTo: '/user',
+    redirectTo: '/home',
     pathMatch: 'full'
   },
   { path: 'pageNotFound', component: PageNotFoundComponent },
@@ -46,7 +52,9 @@ const appRoutes: Routes = [
     UserListComponent,
     PlayerHomeComponent,
     LiveOddsComponent,
-    TwoDecimalDirective
+    TwoDecimalDirective,
+    AdminPageComponent,
+    RaceResultComponent
   ],
   imports: [
     RouterModule.forRoot(
