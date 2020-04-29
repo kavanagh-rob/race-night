@@ -11,7 +11,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let user of users; let i = index;">
+      <tr *ngFor="let user of users; let i = index;"  (click)="navigateToUser(user.userId)">
         <td>{{i+1}}</td>
         <td>{{user.name}}</td>
         <td>{{user.balance}}</td>

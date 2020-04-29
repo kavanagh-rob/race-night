@@ -3,7 +3,7 @@ import { User } from '../../models/user';
 import {DataService} from '../../shared/services/data.service';
 import {Router, NavigationExtras, ActivatedRoute} from '@angular/router';
 import { v1 as uuid } from 'uuid';
-import { areAllEquivalent } from '@angular/compiler/src/output/output_ast';
+
 
 @Component({
   selector: 'app-user-list',
@@ -29,6 +29,10 @@ export class UserListComponent implements OnInit {
     this.dataService.getAllUsers().then(res => { // Success
       this.users = res.Items;
     });
+  }
+
+  navigateToUser(userId) {
+    this.router.navigateByUrl('/player-home/' + userId);
   }
 
   submitUser() {
