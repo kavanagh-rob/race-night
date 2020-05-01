@@ -1,0 +1,86 @@
+<h2>Admin Set Result Page</h2>
+<div class="row">
+        <div class="navButton">
+            <button class="btn btn-info navLink" routerLink="/admin-page" >Users</button>
+        </div>
+        <div class="navButton">
+            <button class="btn btn-success navLink" routerLink="/admin-submit-results" disabled>Set Result</button>
+        </div>
+        <div class="navButton">
+            <button class="btn btn-danger navLink" routerLink="/admin-payout">Payout</button>
+        </div>    
+    </div>
+    <br/>
+    <h3>Set Result for Current Race : Race {{raceInfo.raceNumber}}</h3>
+<div class="text-center">
+    <div [hidden]="!existingResultError" class="box-msg" role="alert">
+        <h4 class="warningText"><strong>Warning!</strong> A Result has already been submitted for this race</h4>
+    </div>
+    <div [hidden]="!raceActiveError" class="box-msg" role="alert">
+        <h4 class="warningText"><strong>Warning!</strong> The race is still active</h4>
+    </div>
+</div>
+
+<table class="table hoverTable">
+    <thead>
+        <tr>
+            <th scope="col">Horse Number</th>
+            <th scope="col">Horse Name</th>
+            <th scope="col">Return per €</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let horse of raceInfo.horses;">
+            <td>{{horse.number}}</td>
+            <td>{{horse.name}}</td>
+            <td>{{horse.liveOdds}}</td>
+            <td><button (click)="setRaceWinner(horse)" data-toggle="modal" data-target="#setResultForm"  class="btn btn-primary">Set Winner</button></td>
+        </tr>
+    </tbody>
+</table>
+
+
+<div class="modal fade" id="setResultForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Set Race Winner</h4>
+        <button type="button" id="closeSetResultFormButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+            <div class="modal-footer d-flex justify-content-center text-center">
+                    <h6 class="modal-title w-100 font-weight-bold">Confirm Results</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Race Number: {{raceInfo.raceNumber}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Number: {{raceResult.winningHorseNumber}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Name: {{raceResult.winningHorseName}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Odds: {{raceResult.winningHorseOdds}}</h6>
+            </div>
+            <form (ngSubmit)="submitRaceResults()" class="form-horizontal" #setResultsForm="ngForm">
+             <fieldset>     
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="videoUrlInput"> <i class="fas fa-phone prefix grey-text"></i>Video Replay Url</label>
+                      <input [(ngModel)]="raceResult.videoUrl" name="videoUrlInput" type="textbox" id="videoUrlInput" class="form-control validate">
+                    </div>
+                 </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Submit Race Results</button>
+            </div>
+        </form>
+
+            <div class="text-center">
+                <div [hidden]="!existingResultError" class="box-msg" role="alert">
+                    <span class="warningText"><strong>Warning!</strong> A Result has already been submitted for this race</span>
+                </div>
+                <div [hidden]="!raceActiveError" class="box-msg" role="alert">
+                    <span class="warningText"><strong>Warning!</strong> The race is still active</span>
+                </div>
+            </div>    
+      </div>
+    </div>
+  </div>
+</div>

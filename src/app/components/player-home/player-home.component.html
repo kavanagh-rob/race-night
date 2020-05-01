@@ -1,14 +1,30 @@
-<h1>Hello {{user.name}}</h1>
-<h2>Your Current Balance is €{{user.balance}}</h2>
-<h3>Race {{raceInfo.raceNumber}}</h3>
-<h4>Race Status is {{raceInfo.isActive ? 'Active' : 'bettingSuspended' }}</h4>
-
-<br/>
+<div class="row">
+    <div class="col-xs-12 card-container">
+        <mat-card class="user-card">
+             <mat-card-header class="matHeader">
+                 <div mat-card-avatar class="user-header-image"  [ngStyle]="getUserImage()"></div>
+                 <mat-card-title><span class="helloTxt">Hello {{user.name}}</span></mat-card-title>
+                 <mat-card-subtitle>
+                    <div class="subText">
+                     Current Balance: <span class="balanceTxt">€{{user.balance}}</span>
+                     </div>
+                </mat-card-subtitle>
+             </mat-card-header>
+             <mat-card-content> 
+                 <div class="card-content-container">
+                     <h5>Current Race: <strong>Race  {{raceInfo.raceNumber}}</strong></h5>
+                     <h5>Prize Pot: <strong>€{{totalBetValue}}</strong></h5>
+                     <h5>Race Status: <span [ngStyle]="getRaceActiveStyle(raceInfo.isActive)">{{raceInfo.isActive ? 'Active' : 'bettingSuspended' }}</span></h5>
+                 </div>
+             </mat-card-content>
+         </mat-card>
+    </div>
+</div>
 
 <mat-tab-group>
-    <mat-tab label="Betting">
-        <h5>Total Bets placed on this Race is <strong>€{{totalBetValue}}</strong></h5>
-        <h5>Race Card</h5>
+    <mat-tab label="Bet">
+            <br/>
+            <h2> Live Odds </h2>
         <table class="table hoverTable">
             <thead>
                 <tr>
@@ -28,7 +44,7 @@
             </tbody>
         </table>
     </mat-tab>
-    <mat-tab label="Transactions">
+    <mat-tab label="History">
             <br/>
             <h2> Top Ups </h2>
             <table class="table hoverTable">
@@ -45,7 +61,7 @@
                             <td>{{user.name}}</td>
                             <td>{{user.userId}}</td>
                             <td>{{payment.date}}</td>
-                            <td>€{{payment.amount}}</td>
+                            <td [ngStyle]="{color: 'green'}">€{{payment.amount}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -64,7 +80,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let bet of userBetsList;">
+                            <tr *ngFor="let bet of sortBetByRace(userBetsList);" [ngStyle]="getBetColor(bet.status)">
                                 <td>{{bet.raceNumber}}</td>
                                 <td>{{bet.horseName}}</td>
                                 <td>{{bet.horseNumber}}</td>
@@ -76,9 +92,15 @@
                         </tbody>
                     </table>
     </mat-tab>
-    <mat-tab label="RaceCard">
-        <h2> Race Image </h2>
+    <mat-tab label="Card">
+            <br/>
+            <h2>Race Card</h2>
         <img class="racecard-image" [src]="raceInfo.image"/>
+    </mat-tab>
+    <mat-tab label="Results">
+        <br/>
+        <h2>Race Results</h2>
+        <app-results-video></app-results-video>
     </mat-tab>
 </mat-tab-group>
 
@@ -107,17 +129,17 @@
                  </div>
           </fieldset>
             <div class="modal-footer d-flex justify-content-center">
-                <button [disabled]="buttonClicked" type="submit" class="btn btn-dark">Place Bet</button>
+                <button type="submit" class="btn btn-dark">Place Bet</button>
             </div>
         </form>
-        <div [hidden]="!balanceError" class="alert alert-error box-msg" role="alert">
+        <div [hidden]="!balanceError" class="alert alert-error box-msg warningText" role="alert">
             <strong>Sorry!</strong> Your not have enough funds. 
             Please lower the bet or add more funds.
         </div>
-        <div [hidden]="!raceExpiredError" class="alert alert-error box-msg" role="alert">
+        <div [hidden]="!raceExpiredError" class="alert alert-error box-msg warningText" role="alert">
             <strong>Sorry!</strong> Sorry this race has Expired
         </div>    
-        <div [hidden]="!stakeError" class="alert alert-error box-msg" role="alert">
+        <div [hidden]="!stakeError" class="alert alert-error box-msg warningText" role="alert">
                 <strong>Sorry!</strong> The Stake is too low
         </div> 
       </div>

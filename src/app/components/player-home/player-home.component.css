@@ -1,0 +1,31 @@
+ 
+  .user-header-image {
+    background-size: cover;
+  }
+  
+  .card-container {
+    margin: 10px;
+    width: 100%;
+  }
+
+  .card-content-container {
+    margin: 10px;
+  }
+.subText{
+  font-size: 1.3em;
+}
+
+.balanceTxt {
+    color: green;
+    font-weight: bold;
+  }
+
+.helloTxt {
+  font-size: 1.3em;
+  color: darkmagenta;
+  font-weight: bold;
+}
+.matHeader{
+  text-align: right;
+  widows: 100%;
+}

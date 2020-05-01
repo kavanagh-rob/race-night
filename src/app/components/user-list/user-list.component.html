@@ -1,4 +1,5 @@
 <div class="userListBody">
+    <br/>
     <h3>Available Punters</h3>
   
     <table class="table hoverTable">
@@ -11,11 +12,11 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let user of users; let i = index;"  (click)="navigateToUser(user.userId)">
-        <td>{{i+1}}</td>
-        <td>{{user.name}}</td>
-        <td>{{user.balance}}</td>
-        <td><button (click)="topUpUser(user)"  data-toggle="modal" data-target="#topUpUserForm"  class="btn btn-primary">Top Balance for user {{user.name}}</button></td>
+      <tr *ngFor="let user of users; let i = index;">
+        <td (click)="navigateToUser(user.userId)">{{i+1}}</td>
+        <td (click)="navigateToUser(user.userId)">{{user.name}}</td>
+        <td (click)="navigateToUser(user.userId)">{{user.balance}}</td>
+        <td><button (click)="topUpUser(user)"  data-toggle="modal" data-target="#topUpUserForm"  class="btn btn-primary">Add Funds</button></td>
       </tr>
       </tbody>
     </table>
@@ -42,7 +43,12 @@
                     <div class="md-form mb-2"> 
                       <label data-error="wrong" data-success="right" for="userNameInput"><i class="fas fa-user prefix grey-text"></i>User name</label>
                       <input [(ngModel)]="userModel.name" name="userName" type="text" id="userNameInput" class="form-control validate" required>
-                     
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <div class="md-form mb-2"> 
+                      <label data-error="wrong" data-success="right" for="userAvatorInput"><i class="fas fa-user prefix grey-text"></i>User avator url</label>
+                      <input [(ngModel)]="userModel.avatorUrl" name="userName" type="text" id="userAvatorInput" class="form-control validate">       
                     </div>
                  </div>
                  <div class="form-group">

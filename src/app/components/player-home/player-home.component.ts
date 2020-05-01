@@ -4,6 +4,7 @@ import {DataService} from '../../shared/services/data.service';
 import {Router} from '@angular/router';
 import { v1 as uuid } from 'uuid';
 
+
 @Component({
   selector: 'app-player-home',
   templateUrl: './player-home.component.html',
@@ -27,6 +28,7 @@ export class PlayerHomeComponent implements OnInit {
   raceExpiredError = false;
   totalBetValue = 0;
   buttonClicked = false;
+  placingbet = false;
 
   ngOnInit(): void {
     if (this.user === undefined){
@@ -38,11 +40,33 @@ export class PlayerHomeComponent implements OnInit {
     }, 5000);
   }
 
+
+
   refreshData() {
     this.dataService.getLiveRaceInfo().then(raceInfoData => {
       this.raceInfo = raceInfoData;
       this.getCurentBetsForRace();
     });
+  }
+
+  getCurentBetsForRace() {
+    const betsQueryData: any = {};
+    betsQueryData.table_name = this.raceInfo.dbBetTableName;
+    this.dataService.queryBets(betsQueryData).then(res => {
+      this.calculateCurrentOdds(res.Items);
+      this.getUserBets(res.Items);
+    });
+  }
+
+  calculateCurrentOdds(betList){
+    this.totalBetValue = 0;
+    const raceBets = this.filterBetsForRace(betList);
+    this.calculateBetTotals(raceBets);
+  }
+
+  getUserBets(betList){
+    this.userBetsList = betList.filter(
+      bets => bets.userId === this.user.userId);
   }
 
   requestBet() {
@@ -56,7 +80,8 @@ export class PlayerHomeComponent implements OnInit {
     this.betslip.userName = this.user.name;
     this.betslip.userBalance = this.setTwoDecimals(this.user.balance);
 
-    if (Number(this.betslip.stake) < 1) {
+    const stake = Number(this.betslip.stake);
+    if (!stake || isNaN(stake) || stake < 1) {
       this.stakeError = true;
       return;
     }
@@ -75,35 +100,6 @@ export class PlayerHomeComponent implements OnInit {
           this.raceExpiredError = true;
         }
       });
-    });
-  }
-
-  getCurentBetsForRace() {
-    const betsQueryData: any = {};
-    betsQueryData.table_name = this.raceInfo.dbBetTableName;
-    this.dataService.queryBets(betsQueryData).then(res => {
-      this.calculateCurrentOdds(res.Items);
-      this.getUserBets(res.Items);
-    });
-  }
-
-  getUserBets(betList){
-    this.userBetsList = betList.filter(
-      bets => bets.userId === this.user.userId);
-  }
-  calculateCurrentOdds(betList){
-    this.totalBetValue = 0;
-    const raceBets = this.filterBetsForRace(betList);
-    this.calculateBetTotals(raceBets);
-  }
-
-  filterBetsForRace(betList) {
-    return betList.filter(
-      betData => {
-        if (betData.meetingId !== this.raceInfo.meetingId || betData.raceNumber !== this.raceInfo.raceNumber) {
-          return false;
-        }
-        return true;
     });
   }
 
@@ -130,11 +126,8 @@ export class PlayerHomeComponent implements OnInit {
           });
   }
 
-  setTwoDecimals(input){
-    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
-  }
-
   setSelectedHorse(horse){
+    this.placingbet = false;
     this.buttonClicked = false;
     this.balanceError = false;
     this.raceExpiredError = false;
@@ -144,8 +137,13 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   placeBet() {
+    if (this.placingbet){
+      return;
+    }
+    this.placingbet = true;
     const userData: any = {};
     this.user.balance = Number(this.user.balance) - Number(this.betslip.stake);
+    this.user.balance = this.setTwoDecimals(this.user.balance);
     userData.item = this.user;
     userData.table_name = 'RN_Users';
 
@@ -153,6 +151,7 @@ export class PlayerHomeComponent implements OnInit {
     this.dataService.putTableInfo(userData).then(res => {
       const betData: any = {};
       betData.table_name = this.raceInfo.dbBetTableName;
+      this.betslip.stake = this.setTwoDecimals(this.betslip.stake);
       betData.item = this.betslip;
       this.betslip.betId = uuid();
       // submit bet
@@ -161,6 +160,66 @@ export class PlayerHomeComponent implements OnInit {
         location.reload();
       });
     });
+  }
+
+  filterBetsForRace(betList) {
+    return betList.filter(
+      betData => {
+        if (betData.meetingId !== this.raceInfo.meetingId || betData.raceNumber !== this.raceInfo.raceNumber) {
+          return false;
+        }
+        return true;
+    });
+  }
+
+  setTwoDecimals(input){
+    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
+  }
+
+  getUserImage(){
+    let avator = 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Donald_Duck.svg/1200px-Donald_Duck.svg.png';
+    if (this.user.avatorUrl){
+      avator = this.user.avatorUrl;
+    }
+    return { 'background-image': 'url(' + avator + ')' };
+  }
+
+  getRaceActiveStyle(isActive){
+    let actColor = '';
+    if (isActive){
+      actColor = 'blue';
+    }
+    else {
+      actColor = 'red';
+    }
+    return { color: actColor };
+
+  }
+  getBetColor(status){
+    let color = '';
+    if (status === 'WIN'){
+      color = 'green';
+    }
+    else if (status === 'LOSE'){
+      color = 'red';
+    }
+    else {
+      color = 'orange';
+    }
+    return { 'background-color': color };
+  }
+
+  sortBetByRace(prop: string) {
+    if (! this.userBetsList){
+      return;
+    }
+    const raceNumberProp = 'raceNumber';
+    const horseNumberProp = 'horseNumber';
+    const sortByHorse = this.userBetsList.sort((a, b) =>
+      a[horseNumberProp] > b[horseNumberProp] ? 1 : a[horseNumberProp] === b[horseNumberProp] ? 0 : -1);
+
+    return  sortByHorse.sort((a, b) =>
+      a[raceNumberProp] < b[raceNumberProp] ? 1 : a[raceNumberProp] === b[raceNumberProp] ? 0 : -1);
   }
 
 }

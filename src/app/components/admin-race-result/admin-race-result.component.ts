@@ -4,8 +4,8 @@ import { v1 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-race-result',
-  templateUrl: './race-result.component.html',
-  styleUrls: ['./race-result.component.css']
+  templateUrl: './admin-race-result.component.html',
+  styleUrls: ['./admin-race-result.component.css']
 })
 export class RaceResultComponent implements OnInit {
 
@@ -110,13 +110,16 @@ export class RaceResultComponent implements OnInit {
     this.raceActiveError = false;
     if (this.raceInfo.isActive){
       this.raceActiveError = true;
-    }
-    const resultData: any = {};
-    resultData.table_name = this.raceInfo.dbResultTableName;
-    resultData.item = this.raceResult;
+    } else{
+      const resultData: any = {};
+      resultData.table_name = this.raceInfo.dbResultTableName;
+      resultData.item = this.raceResult;
 
-    this.dataService.putTableInfo(resultData).then(resp => {
-    });
+      this.dataService.putTableInfo(resultData).then(resp => {
+        document.getElementById('setResultForm').click();
+        location.reload();
+      });
+    }
   }
 
 }

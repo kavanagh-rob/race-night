@@ -1,10 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-.mat-tab-label {
-    /* font-size: 2em; */
+.mat-card-avatar {
+  height: 45px !important;
+  width: 45px !important;
 }
-
+.mat-card-title
+.mat-card-subtitle {
+  margin: 0 !important;
+}
 .hoverTable tbody tr:hover {
   background-color: #ffff99;
   cursor: pointer;
@@ -15,6 +19,21 @@
   color: darkred;
 }
 
+.mat-card-header-text{
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.card-content-container{
+ text-align: center;
+}
+.mat-card {
+  padding: 5px 18px !important;
+}
+
+.warningText {
+  color: red;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,47 @@
+<h2>Admin Payout Page</h2>
+<div class="row">
+        <div class="navButton">
+            <button class="btn btn-info navLink" routerLink="/admin-page" >Users</button>
+        </div>
+        <div class="navButton">
+            <button class="btn btn-success navLink" routerLink="/admin-submit-results">Set Result</button>
+        </div>
+        <div class="navButton">
+            <button class="btn btn-danger navLink" routerLink="/admin-payout" disabled >Payout</button>
+        </div>    
+    </div>
+<br/>
+ <h3>Bets for each Race</h3>
+ <div *ngFor="let raceNumber of sortRaceList(raceList);">
+        <div [hidden]="getResultForRace(raceNumber)" class="box-msg" role="alert">
+                <h4 class="warningText"><strong>Warning!</strong> No winner Set for Race</h4>
+            </div>
+         <h4>Race {{raceNumber}} </h4>
+             <table class="table hoverTable">
+                     <thead>
+                         <tr>
+                             <th scope="col">Race Number</th>
+                             <th scope="col">User ID</th>
+                             <th scope="col">Horse Name</th>
+                             <th scope="col">Horse Number</th>
+                             <th scope="col">Stake</th>
+                             <th scope="col">Odds</th>
+                             <th scope="col">Status</th>
+                             <th scope="col">Return</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         <tr *ngFor="let bet of getBetsForRace(raceNumber);" [ngStyle]="getBetColor(bet.status)">
+                             <td>{{bet.raceNumber}}</td>
+                             <td>{{bet.userId}}</td>
+                             <td>{{bet.horseName}}</td>
+                             <td>{{bet.horseNumber}}</td>
+                             <td>{{bet.stake}}</td>
+                             <td>{{bet.finalOdds}}</td>
+                             <td>{{bet.status}}</td>
+                             <td>{{bet.payout}}</td>
+                         </tr>
+                     </tbody>
+                 </table>
+         <button [disabled]="clicked" (click)="processBetsForRace(raceNumber); clicked = true;"  class="btn btn-primary">Process Bets for Race {{raceNumber}}</button>
+     </div>

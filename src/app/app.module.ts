@@ -15,9 +15,12 @@ import { LiveOddsComponent } from './components/live-odds/live-odds.component';
 import { TwoDecimalDirective } from './shared/two-decimal.directive';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatCardModule} from '@angular/material/card';
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
-import { RaceResultComponent } from './components/race-result/race-result.component';
-
+import { RaceResultComponent } from './components/admin-race-result/admin-race-result.component';
+import { ResultsVideoComponent } from './components/results-video/results-video.component';
+import { AdminPayoutComponent } from './components/admin-payout/admin-payout.component';
+import { SafePipe } from './shared/pipes/safe-url';
 const appRoutes: Routes = [
   {
     path: 'home',
@@ -32,8 +35,20 @@ const appRoutes: Routes = [
     },
   },
   {
+    path: 'users',
+    component: UserListComponent
+  },
+  {
     path: 'admin-page',
     component: AdminPageComponent,
+  },
+  {
+    path: 'admin-submit-results',
+    component: RaceResultComponent,
+  },
+  {
+    path: 'admin-payout',
+    component: AdminPayoutComponent,
   },
   { path: '',
     redirectTo: '/home',
@@ -54,7 +69,10 @@ const appRoutes: Routes = [
     LiveOddsComponent,
     TwoDecimalDirective,
     AdminPageComponent,
-    RaceResultComponent
+    RaceResultComponent,
+    ResultsVideoComponent,
+    AdminPayoutComponent,
+    SafePipe
   ],
   imports: [
     RouterModule.forRoot(
@@ -67,7 +85,8 @@ const appRoutes: Routes = [
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule
   ],
   providers: [DataService, PlayerResolver, RaceResolver],
   bootstrap: [AppComponent]

@@ -13,7 +13,7 @@ import { v1 as uuid } from 'uuid';
 export class UserListComponent implements OnInit {
 
   constructor(private dataService: DataService, private router: Router) {
-    this.userModel = new User(uuid(), '', '', null, []);
+    this.userModel = new User(uuid(), 'name', null, null, []);
   }
   meeting;
   users = [];
@@ -54,21 +54,26 @@ export class UserListComponent implements OnInit {
   }
 
   submitTopUpForUser() {
-    this.dataService.getUserById(this.userToTopUp.userId).then(res => {
-      const userWithTopUp = res.Item;
-      userWithTopUp.balance = Number(userWithTopUp.balance) + Number(this.topUpAmount);
-      const userData: any = {};
-      const payment = {date: new Date().toLocaleString(), amount: Number(this.topUpAmount)};
-      userWithTopUp.payments.push(payment);
-      userData.item = userWithTopUp;
-      userData.table_name = 'RN_Users';
+    if (this.topUpAmount && Number(this.topUpAmount) > 0){
+      this.dataService.getUserById(this.userToTopUp.userId).then(res => {
+        const userWithTopUp = res.Item;
+        userWithTopUp.balance = Number(userWithTopUp.balance) + Number(this.topUpAmount);
+        const userData: any = {};
+        const payment = {date: new Date().toLocaleString(), amount: Number(this.topUpAmount)};
+        if (!userWithTopUp.payments){
+          userWithTopUp.payments = [];
+        }
+        userWithTopUp.payments.push(payment);
+        userData.item = userWithTopUp;
+        userData.table_name = 'RN_Users';
 
-      // update user balance
-      this.dataService.putTableInfo(userData).then(resp => {
-        document.getElementById('closeTopUpModelButton').click();
-        location.reload();
+        // update user balance
+        this.dataService.putTableInfo(userData).then(resp => {
+          document.getElementById('closeTopUpModelButton').click();
+          location.reload();
+        });
       });
-    });
+    }
   }
 
 }
