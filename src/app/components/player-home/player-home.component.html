@@ -13,8 +13,10 @@
              <mat-card-content> 
                  <div class="card-content-container">
                      <h5>Current Race: <strong>Race  {{raceInfo.raceNumber}}</strong></h5>
-                     <h5>Prize Pot: <strong>€{{totalBetValue}}</strong></h5>
-                     <h5>Race Status: <span [ngStyle]="getRaceActiveStyle(raceInfo.isActive)">{{raceInfo.isActive ? 'Active' : 'bettingSuspended' }}</span></h5>
+                     <h6 class="startTxt">(Starting at: <strong>  {{raceInfo.raceTime}}</strong>)</h6>
+                     <h5>Win Pot: <strong>€{{getWinPot()}}</strong></h5>
+                     <h6 [hidden]="!raceInfo.showPayoutFactor">(Tote Returns : <strong> {{ getPoolPayoutFactor()}}%)</strong></h6>
+                     <h5>Betting Status: <span [ngStyle]="getRaceActiveStyle(raceInfo.isActive)">{{raceInfo.isActive ? 'Active' : 'Suspended' }}</span></h5>
                  </div>
              </mat-card-content>
          </mat-card>
@@ -74,18 +76,18 @@
                                 <th scope="col">Horse Name</th>
                                 <th scope="col">Horse Number</th>
                                 <th scope="col">Amount</th>
-                                <th scope="col">Status</th>
+                                <th scope="col">Result</th>
                                 <th scope="col">SP</th>
                                 <th scope="col">Return</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let bet of sortBetByRace(userBetsList);" [ngStyle]="getBetColor(bet.status)">
+                            <tr *ngFor="let bet of sortBetByRace(userBetsList);" [ngStyle]="getBetColor(bet.result)">
                                 <td>{{bet.raceNumber}}</td>
                                 <td>{{bet.horseName}}</td>
                                 <td>{{bet.horseNumber}}</td>
                                 <td>€{{bet.stake}}</td>
-                                <td>{{bet.status}}</td>
+                                <td>{{bet.result}}</td>
                                 <td>{{bet.finalOdds}}</td>
                                 <td>€{{bet.payout}}</td>
                             </tr>

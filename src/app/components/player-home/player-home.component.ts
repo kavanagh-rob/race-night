@@ -37,7 +37,7 @@ export class PlayerHomeComponent implements OnInit {
     this.getCurentBetsForRace();
     this.interval = setInterval(() => {
         this.refreshData();
-    }, 5000);
+    }, 20000);
   }
 
 
@@ -73,7 +73,7 @@ export class PlayerHomeComponent implements OnInit {
     this.balanceError = false;
     this.stakeError = false;
     this.raceExpiredError = false;
-    this.betslip.status = 'PENDING';
+    this.betslip.result = 'PENDING';
     this.betslip.meetingId = this.raceInfo.meetingId;
     this.betslip.raceNumber = this.raceInfo.raceNumber;
     this.betslip.userId = this.user.userId;
@@ -121,9 +121,13 @@ export class PlayerHomeComponent implements OnInit {
   getLiveToteOdds() {
     const currentHorse = this.raceInfo.horses.forEach(
       horse => {
-        horse.liveOdds = horse.totalBetsForHorse === 0 ?
+        let factoredHorseOdds = horse.totalBetsForHorse === 0 ?
         this.setTwoDecimals(this.totalBetValue) : this.setTwoDecimals(Number(this.totalBetValue) / Number(horse.totalBetsForHorse));
-          });
+        if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
+          factoredHorseOdds =   this.setTwoDecimals(factoredHorseOdds * Number(this.raceInfo.payoutFactor));
+        }
+        horse.liveOdds = factoredHorseOdds;
+        });
   }
 
   setSelectedHorse(horse){
@@ -172,10 +176,6 @@ export class PlayerHomeComponent implements OnInit {
     });
   }
 
-  setTwoDecimals(input){
-    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
-  }
-
   getUserImage(){
     let avator = 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Donald_Duck.svg/1200px-Donald_Duck.svg.png';
     if (this.user.avatorUrl){
@@ -195,12 +195,12 @@ export class PlayerHomeComponent implements OnInit {
     return { color: actColor };
 
   }
-  getBetColor(status){
+  getBetColor(result){
     let color = '';
-    if (status === 'WIN'){
+    if (result === 'WIN'){
       color = 'green';
     }
-    else if (status === 'LOSE'){
+    else if (result === 'LOSE'){
       color = 'red';
     }
     else {
@@ -219,7 +219,24 @@ export class PlayerHomeComponent implements OnInit {
       a[horseNumberProp] > b[horseNumberProp] ? 1 : a[horseNumberProp] === b[horseNumberProp] ? 0 : -1);
 
     return  sortByHorse.sort((a, b) =>
-      a[raceNumberProp] < b[raceNumberProp] ? 1 : a[raceNumberProp] === b[raceNumberProp] ? 0 : -1);
+      b[raceNumberProp] - a[raceNumberProp]);
   }
 
+  getPoolPayoutFactor(){
+    if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
+     return Number(this.raceInfo.payoutFactor) * 100;
+    }
+    return 100;
+  }
+
+  getWinPot() {
+    if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
+      return this.setTwoDecimals(Number(this.raceInfo.payoutFactor) * Number(this.totalBetValue));
+     }
+    return this.totalBetValue;
+  }
+
+  setTwoDecimals(input){
+    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
+  }
 }

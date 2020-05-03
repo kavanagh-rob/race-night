@@ -21,25 +21,27 @@
                      <thead>
                          <tr>
                              <th scope="col">Race Number</th>
-                             <th scope="col">User ID</th>
+                             <th scope="col">User Name</th>
                              <th scope="col">Horse Name</th>
-                             <th scope="col">Horse Number</th>
+                             <th scope="col">Horse No.</th>
                              <th scope="col">Stake</th>
                              <th scope="col">Odds</th>
-                             <th scope="col">Status</th>
-                             <th scope="col">Return</th>
+                             <th scope="col">Result</th>
+                             <th scope="col">Value</th>
+                             <th scope="col">Payment</th>
                          </tr>
                      </thead>
                      <tbody>
-                         <tr *ngFor="let bet of getBetsForRace(raceNumber);" [ngStyle]="getBetColor(bet.status)">
+                         <tr *ngFor="let bet of getBetsForRace(raceNumber);" [ngStyle]="getBetColor(bet)" (click)="navigateToUser(bet.userId)">
                              <td>{{bet.raceNumber}}</td>
-                             <td>{{bet.userId}}</td>
+                             <td>{{bet.userName}}</td>   
                              <td>{{bet.horseName}}</td>
                              <td>{{bet.horseNumber}}</td>
                              <td>{{bet.stake}}</td>
                              <td>{{bet.finalOdds}}</td>
-                             <td>{{bet.status}}</td>
+                             <td>{{bet.result}}</td>
                              <td>{{bet.payout}}</td>
+                             <td>{{bet.paymentStatus}}</td>
                          </tr>
                      </tbody>
                  </table>

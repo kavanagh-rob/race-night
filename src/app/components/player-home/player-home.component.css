@@ -1,4 +1,8 @@
- 
+ .racecard-image {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+ }
   .user-header-image {
     background-size: cover;
   }
@@ -28,4 +32,8 @@
 .matHeader{
   text-align: right;
   widows: 100%;
+}
+
+.startTxt {
+  color: darkcyan;
 }

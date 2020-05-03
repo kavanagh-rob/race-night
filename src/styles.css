@@ -2,8 +2,10 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 .mat-card-avatar {
-  height: 45px !important;
-  width: 45px !important;
+  height: 75px !important;
+  width: 75px !important;
+  margin-top: 5px;
+  margin-left: 5px;
 }
 .mat-card-title
 .mat-card-subtitle {

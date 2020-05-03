@@ -43,6 +43,13 @@ export class RaceResultComponent implements OnInit {
     });
   }
 
+  highlightRaceWinner(horseNumber){
+    if (this.resultsForCurrentRace && this.resultsForCurrentRace[0]){
+      return horseNumber === this.resultsForCurrentRace[0].winningHorseNumber ? {'background-color': 'green'} : '';
+    }
+    return '';
+  }
+
   getCurentBetsForRace() {
     const betsQueryData: any = {};
     betsQueryData.table_name = this.raceInfo.dbBetTableName;
@@ -75,9 +82,13 @@ export class RaceResultComponent implements OnInit {
   getLiveToteOdds() {
     const currentHorse = this.raceInfo.horses.forEach(
       horse => {
-        horse.liveOdds = horse.totalBetsForHorse === 0 ?
+        let factoredHorseOdds = horse.totalBetsForHorse === 0 ?
         this.setTwoDecimals(this.totalBetValue) : this.setTwoDecimals(Number(this.totalBetValue) / Number(horse.totalBetsForHorse));
-          });
+        if (this.raceInfo.payoutFactor  && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1){
+          factoredHorseOdds =  this.setTwoDecimals(factoredHorseOdds * Number(this.raceInfo.payoutFactor));
+        }
+        horse.liveOdds = factoredHorseOdds;
+      });
   }
 
   filterBetsForRace(betList) {

@@ -30,7 +30,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let horse of raceInfo.horses;">
+        <tr *ngFor="let horse of raceInfo.horses;" [ngStyle]="highlightRaceWinner(horse.number)">
             <td>{{horse.number}}</td>
             <td>{{horse.name}}</td>
             <td>{{horse.liveOdds}}</td>

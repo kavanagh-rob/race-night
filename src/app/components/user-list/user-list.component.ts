@@ -13,7 +13,7 @@ import { v1 as uuid } from 'uuid';
 export class UserListComponent implements OnInit {
 
   constructor(private dataService: DataService, private router: Router) {
-    this.userModel = new User(uuid(), 'name', null, null, []);
+    this.userModel = new User(uuid(), 'name', null, 0, []);
   }
   meeting;
   users = [];
@@ -37,6 +37,7 @@ export class UserListComponent implements OnInit {
 
   submitUser() {
     const data: any = {};
+    this.userModel.userId = uuid();
     data.item = this.userModel;
     data.table_name = 'RN_Users';
     if (this.userModel.balance) {
