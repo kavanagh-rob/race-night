@@ -168,7 +168,6 @@ export class AdminPayoutComponent implements OnInit {
       // update user balance
       this.dataService.putTableInfo(userData).then(resp => {
         winningBetsForUser.forEach(winBet => {
-          console.log('COMLETE');
           winBet.paymentStatus = 'COMPLETE';
           const betData: any = {};
           betData.item = winBet;

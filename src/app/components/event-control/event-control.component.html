@@ -1,0 +1,71 @@
+<h4>Start Creating your Event</h4>
+
+<div class="row">
+        <button data-toggle="modal" data-target="#createEventForm" (click)="newEventForm()" class="btn btn-primary offset-md-1 col-md-4">Add New Race To Card</button>
+        <div class="col-md-2"></div>
+        <button data-toggle="modal" data-target="#createEventForm" (click)="cloneEventForm()" class="btn btn-primary col-md-4">Clone Previous Race</button>
+     </div>
+
+
+<div class="modal fade" id="createEventForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h3 class="modal-title w-100 font-weight-bold">Setup an Event</h3>
+        <button type="button" id="closeCreateEventFormButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div>
+            <h4 class="modal-subtitle text-center w-100 font-weight-bold">Enter in Race Details</h4>
+      </div>
+      <div class="modal-body mx-3">
+        <form (ngSubmit)="submitEvent();" class="form-horizontal" #eventForm="ngForm">
+             <fieldset>     
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="eventNameInput"> <i class="fas fa-phone prefix grey-text"></i>Name</label>
+                      <input [(ngModel)]="eventInfo.name" name="eventNameInput" type="textbox" id="eventNameInput" class="form-control validate" required>
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="raceCardImageUrl"> <i class="fas fa-phone prefix grey-text"></i>Race Card Image URL</label>
+                      <input [(ngModel)]="eventInfo.raceCardImageUrl" name="raceCardImageUrl" type="textbox" id="raceCardImageUrl" class="form-control validate" required>
+                    </div>
+                 </div>
+
+                 <h3 class="modal-title w-100 font-weight-bold">Horses</h3>
+                 <br/>
+
+                 <div class="form-group" *ngFor="let horse of eventInfo.horses; let i = index;">
+                    <div class="md-form mb-3">
+                        <h6 class="text-center"> Horse {{i+1}} Details </h6>
+                        <div class="row">
+                            <input [(ngModel)]="eventInfo.horses[i].name" placeholder="Enter Name" name="horse-name-{{i + 1}}" type="textbox" id="horse-name-{{i + 1}}" class="offset-md-1 col-md-4 form-control validate" required>
+                            <div class="col-md-2"></div>
+                            <input [(ngModel)]="eventInfo.horses[i].horseNumber" placeholder="Enter Number" name="horse-number-{{i + 1}}" type="textbox" id="horse-number-{{i + 1}}" class=" col-md-4 form-control validate" required>
+                        </div>
+                        <hr/>
+                    </div>
+                 </div>
+
+                 <div class="row">
+                    <button (click)="addHorse()" class="btn btn-primary offset-md-1 col-md-4">Add Horse</button>
+                    <div class="col-md-2"></div>
+                    <button (click)="removeHorse()" class="btn btn-danger col-md-4">Remove Horse</button>
+                 </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Submit Event</button>
+            </div>
+        </form>
+        <div [hidden]="!formError" class="alert alert-error box-msg warningText" role="alert">
+            <strong>Sorry!</strong> Ther is an error
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</div>

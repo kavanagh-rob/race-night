@@ -21,10 +21,15 @@ import { RaceResultComponent } from './components/admin-race-result/admin-race-r
 import { ResultsVideoComponent } from './components/results-video/results-video.component';
 import { AdminPayoutComponent } from './components/admin-payout/admin-payout.component';
 import { SafePipe } from './shared/pipes/safe-url';
+import { EventControlComponent } from './components/event-control/event-control.component';
 const appRoutes: Routes = [
   {
     path: 'home',
     component: HomeComponent
+  },
+  {
+    path: 'event',
+    component: EventControlComponent
   },
   {
     path: 'player-home/:userId',
@@ -72,7 +77,8 @@ const appRoutes: Routes = [
     RaceResultComponent,
     ResultsVideoComponent,
     AdminPayoutComponent,
-    SafePipe
+    SafePipe,
+    EventControlComponent
   ],
   imports: [
     RouterModule.forRoot(

@@ -37,7 +37,7 @@ export class PlayerHomeComponent implements OnInit {
     this.getCurentBetsForRace();
     this.interval = setInterval(() => {
         this.refreshData();
-    }, 20000);
+    }, 12000);
   }
 
 
@@ -195,13 +195,19 @@ export class PlayerHomeComponent implements OnInit {
     return { color: actColor };
 
   }
-  getBetColor(result){
+  getBetColor(bet){
     let color = '';
-    if (result === 'WIN'){
+    if (bet.paymentStatus === 'COMPLETE'){
       color = 'green';
     }
-    else if (result === 'LOSE'){
-      color = 'red';
+    else if (bet.paymentStatus === 'PROCESSING'){
+      color = 'grey';
+    }
+    else if (bet.result === 'WIN'){
+      color = 'lightgreen';
+    }
+    else if (bet.result === 'LOSE'){
+      color = 'lightcoral';
     }
     else {
       color = 'orange';
