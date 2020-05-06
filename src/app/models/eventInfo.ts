@@ -1,15 +1,14 @@
-import { Horse } from '../models/horse';
 import { v1 as uuid } from 'uuid';
+import { RaceInfo } from '../models/raceInfo';
+
 export class EventInfo {
-  public eventId: string = uuid();
-  public isActive = false;
-  public payoutFactor = 1;
-  public showPayoutFactor = true;
+  constructor() { }
+  public eventInfoId = uuid();
+  public name = null;
+  public organiser = null;
+  public date = null;
   public dbBetTableName = 'bets-001';
   public dbResultTableName = 'rn-results-001';
-  public name = '';
-  public eventNumber = null;
-  public raceCardImageUrl = '';
-  public horses = [];
-    constructor() {  }
-  }
+  public currentRace: RaceInfo;
+  public races = [];
+}

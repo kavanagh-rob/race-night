@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {DataService} from '../../shared/services/data.service';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-admin-payout',
@@ -9,53 +9,51 @@ import {Router} from '@angular/router';
 })
 export class AdminPayoutComponent implements OnInit {
 
-  constructor(private dataService: DataService, private router: Router) { }
+  constructor(private dataService: DataService,  private route: ActivatedRoute, private router: Router) {
+    const resolvedEvent = 'resolvedEvent';
+    this.eventInfo = this.route.snapshot.data[resolvedEvent].Item;
+  }
+  eventInfo;
 
-  allBetsForMeeting = [];
+  allBetsForEvent = [];
   betsToPay = [];
-  currentRaceInfo;
+  liveRaceInfo;
   raceResultsList;
   raceList;
   clicked = false;
 
   ngOnInit() {
-      this.loadRaceResults();
-  }
-
-  loadRaceResults() {
-    this.dataService.getLiveRaceInfo().then(raceInfoData => {
-      this.currentRaceInfo = raceInfoData;
-      this.getSubmittedResults();
-    });
+    this.liveRaceInfo = this.eventInfo ? this.eventInfo.currentRace : null;
+    this.getSubmittedResults();
   }
 
   getSubmittedResults() {
     const resultsRequestData: any = {};
-    resultsRequestData.table_name = this.currentRaceInfo.dbResultTableName;
+    resultsRequestData.table_name = this.eventInfo.dbResultTableName;
     this.dataService.scanTableInfo(resultsRequestData).then(raceResultsData => {
       if (raceResultsData && raceResultsData.Items){
         this.raceResultsList = raceResultsData.Items;
       }
-      this.loadBetsForMeeting();
+      this.loadBetsForEvent();
     });
   }
 
-  loadBetsForMeeting() {
+  loadBetsForEvent() {
     const betsQueryData: any = {};
-    betsQueryData.table_name = this.currentRaceInfo.dbBetTableName;
+    betsQueryData.table_name = this.eventInfo.dbBetTableName;
     this.dataService.queryBets(betsQueryData).then(res => {
       if (res.Items){
-        this.allBetsForMeeting = res.Items.filter(
-          bets => bets.meetingId === this.currentRaceInfo.meetingId);
+        this.allBetsForEvent = res.Items.filter(
+          bet => bet.eventId === this.eventInfo.eventInfoId);
       }
 
-      this.raceList = this.getDistinctRaces(this.allBetsForMeeting);
+      this.raceList = this.getDistinctRaces(this.allBetsForEvent);
       this.setBetResultInfo();
     });
   }
 
   setBetResultInfo() {
-    this.allBetsForMeeting.forEach(bet => {
+    this.allBetsForEvent.forEach(bet => {
       // change this for no stats check
       if (bet.result === 'N/A' || bet.result === 'PENDING'){
         const startingPrice = this.getHorseOdds(bet.raceNumber, bet.horseNumber);
@@ -70,8 +68,8 @@ export class AdminPayoutComponent implements OnInit {
   }
 
   getBetsForRace(raceNumber) {
-    return this.allBetsForMeeting.filter(
-      bets => bets.raceNumber === raceNumber);
+    return this.allBetsForEvent.filter(
+      bet => bet.raceNumber === raceNumber);
   }
 
   getBetResult(raceNumber, horseNumber) {
@@ -94,7 +92,7 @@ export class AdminPayoutComponent implements OnInit {
       return;
     }
     else{
-      const openBetsForRace = this.allBetsForMeeting.filter(
+      const openBetsForRace = this.allBetsForEvent.filter(
         bet => {
           let isBetOpen = true;
           if ( bet.raceNumber !== raceNumber || this.isCompletedBet(bet)) {
@@ -104,18 +102,19 @@ export class AdminPayoutComponent implements OnInit {
           });
 
       await openBetsForRace.forEach(
-         async openBet => {
+           openBet => {
             openBet.isProcessed = true;
             const betData: any = {};
             betData.item = openBet;
-            betData.table_name = this.currentRaceInfo.dbBetTableName;
+            betData.table_name = this.eventInfo.dbBetTableName;
             if ( !(openBet.paymentStatus === 'COMPLETE') && openBet.result === 'WIN') {
-                console.log('PROCESSING');
                 openBet.paymentStatus = 'PROCESSING';
                 this.betsToPay.push(openBet);
             }
-            await this.upDateBet(betData);
+            this.upDateBet(betData);
         });
+
+      console.log(this.betsToPay);
 
       this.payBetsForUser();
     }
@@ -123,6 +122,8 @@ export class AdminPayoutComponent implements OnInit {
 
   payBetsForUser() {
     const userIDsToPay = this.getDistinctUsersForBetList(this.betsToPay);
+    console.log('userIDsToPay');
+    console.log(userIDsToPay);
     userIDsToPay.forEach(distinctUserId => {
       this.dataService.getUserById(distinctUserId).then(res => {
         const user = res.Item;
@@ -130,7 +131,9 @@ export class AdminPayoutComponent implements OnInit {
             bet => bet.userId === user.userId);
 
         winningBetsForUser.forEach(winBet => {
-          user.balance = Number(user.balance) + Number(winBet.payout);
+          console.log('win bets');
+          console.log(winBet.payout);
+          user.balance = this.setTwoDecimals(Number(user.balance) + Number(winBet.payout));
           });
         this.payUser(user, winningBetsForUser);
       });
@@ -142,8 +145,8 @@ export class AdminPayoutComponent implements OnInit {
     .filter((value, index, self) => self.indexOf(value) === index);
   }
 
-  async upDateBet(betData){
-    await this.dataService.putTableInfo(betData).then(resp => {  });
+  upDateBet(betData){
+    this.dataService.putTableInfo(betData).then(resp => {  });
   }
 
   isCompletedBet(bet){
@@ -168,11 +171,15 @@ export class AdminPayoutComponent implements OnInit {
       // update user balance
       this.dataService.putTableInfo(userData).then(resp => {
         winningBetsForUser.forEach(winBet => {
+          console.log('winbet');
+          console.log(winBet);
           winBet.paymentStatus = 'COMPLETE';
           const betData: any = {};
           betData.item = winBet;
-          betData.table_name = this.currentRaceInfo.dbBetTableName;
+          betData.table_name = this.eventInfo.dbBetTableName;
           this.dataService.putTableInfo(betData).then(closeBetResp => {
+            console.log('closed');
+            console.log(winBet);
           });
         });
       });
@@ -181,7 +188,7 @@ export class AdminPayoutComponent implements OnInit {
 
   updateBetSlip(betslip) {
     const betData: any = {};
-    betData.table_name = this.currentRaceInfo.dbBetTableName;
+    betData.table_name = this.eventInfo.dbBetTableName;
     betData.item = betslip;
     // submit bet
     this.dataService.putTableInfo(betData).then(resp => {
@@ -204,12 +211,21 @@ export class AdminPayoutComponent implements OnInit {
       return;
     }
     return raceResult.raceInfo.horses.filter(
-      horse => horse.number === horseNumber)[0].liveOdds;
+      horse => horse.horseNumber === horseNumber)[0].liveOdds;
   }
 
   navigateToUser(userId) {
     this.router.navigateByUrl('/player-home/' + userId);
   }
+
+  navigateToPage(route) {
+    this.router.navigate(['../../' + route],  {relativeTo: this.route});
+  }
+
+  navigateToLiveResultsPage(route) {
+    this.router.navigate(['../' + route],  {relativeTo: this.route});
+  }
+
 
   setTwoDecimals(input){
     return Number((Math.round(Number(input) * 100) / 100).toFixed(2));

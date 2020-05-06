@@ -31,8 +31,13 @@ export class DataService {
       .catch(this.handleErrorPromise);
   }
 
-  getLiveRaceInfo() {
-    return this.http.get(`${environment.apiUrl}/raceinfo`)
+  getEventInfo(eventId) {
+    const eventsRequestData: any = {};
+    eventsRequestData.table_name = 'RN_EVENTS';
+    const eventIdProp = 'eventInfoId';
+    eventsRequestData.primary_key = eventIdProp;
+    eventsRequestData.primary_key_value = eventId;
+    return this.http.post(`${environment.apiUrl}/tableinfo`, eventsRequestData)
       .toPromise()
       .then(this.extractData)
       .catch(this.handleErrorPromise);

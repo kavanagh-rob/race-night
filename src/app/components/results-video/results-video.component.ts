@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DataService } from '../../shared/services/data.service';
 
 
@@ -10,25 +10,22 @@ import { DataService } from '../../shared/services/data.service';
 export class ResultsVideoComponent implements OnInit {
 
   constructor(private dataService: DataService) { }
-  raceInfo;
+  @Input()
+  eventInfo;
+
   raceResults = [];
 
   ngOnInit(): void {
-    this.getRaceInfo();
+    this.getSubmittedResults();
   }
 
-  getRaceInfo(){
-    this.dataService.getLiveRaceInfo().then(raceInfoData => {
-      this.raceInfo = raceInfoData;
-      this.getSubmittedResults();
-    });
-  }
   getSubmittedResults() {
     const resultsRequestData: any = {};
-    resultsRequestData.table_name = this.raceInfo.dbResultTableName;
+    resultsRequestData.table_name = this.eventInfo.dbResultTableName;
     this.dataService.scanTableInfo(resultsRequestData).then(resultsData => {
       if (resultsData && resultsData.Items){
-        this.raceResults = resultsData.Items;
+        this.raceResults = resultsData.Items.filter(
+          result => result.eventId === this.eventInfo.eventInfoId);
       }
     });
   }

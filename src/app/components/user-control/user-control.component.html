@@ -1,0 +1,117 @@
+<div class="row">
+    <div class="navButton">
+        <button (click)="navigateToPage('users')" class="btn btn-info navLink" [disabled]="true" >Users</button>
+    </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('event')" class="btn btn-warning navLink">Event</button>
+    </div> 
+    <div class="navButton">
+      <button (click)="navigateToPage('live-race')" class="btn btn-success navLink">Live Race</button>
+  </div> 
+</div>
+<br/>
+<app-live-race-card [eventInfo]="eventInfo"></app-live-race-card>
+<br/>
+
+<div class="userListBody">
+        <br/>
+        <h3>Available Punters</h3>
+      
+        <table class="table hoverTable">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Balance</th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let user of users; let i = index;">
+            <td (click)="navigateToUser(user.userId)">{{i+1}}</td>
+            <td (click)="navigateToUser(user.userId)">{{user.name}}</td>
+            <td (click)="navigateToUser(user.userId)">{{user.balance}}</td>
+            <td><button (click)="topUpUser(user)"  data-toggle="modal" data-target="#topUpUserForm"  class="btn btn-primary">Add Funds</button></td>
+          </tr>
+          </tbody>
+        </table>
+        <div>
+          <a class="btn btn-primary" (click)="addNewPlayer()" data-toggle="modal" data-target="#addPlayerForm">Add Player</a>
+        </div>
+    
+      </div>
+    
+    <div class="modal fade" id="addPlayerForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Add Player to RaceNight</h4>
+            <button type="button" id="closeUserModelButton" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body mx-3">
+            <form (ngSubmit)="submitUser()" class="form-horizontal" #userForm="ngForm">
+                 <fieldset>     
+                     <div class="form-group">
+                        <div class="md-form mb-2"> 
+                          <label data-error="wrong" data-success="right" for="userNameInput"><i class="fas fa-user prefix grey-text"></i>User name</label>
+                          <input [(ngModel)]="userModel.name" name="userName" type="text" id="userNameInput" class="form-control validate" required>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="md-form mb-2"> 
+                          <label data-error="wrong" data-success="right" for="userAvatorInput"><i class="fas fa-user prefix grey-text"></i>User avator url</label>
+                          <input [(ngModel)]="userModel.avatorUrl" name="userAvatorInput" type="text" id="userAvatorInput" class="form-control validate">       
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="md-form mb-3">
+                          <label data-error="wrong" data-success="right" for="userBalanceInput"> <i class="fas fa-phone prefix grey-text"></i>User Balance</label>
+                          <input [(ngModel)]="userModel.balance" name="userBalance" type="number" id="userBalanceInput" class="form-control validate" required>
+                        </div>
+                     </div>
+              </fieldset>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-dark">Register User</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="topUpUserForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Top Up Player</h4>
+            <button type="button" id="closeTopUpModelButton" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body mx-3">
+            <form (ngSubmit)="submitTopUpForUser()" class="form-horizontal" #topUpForm="ngForm">
+                <fieldset>     
+                     <div class="form-group">
+                        <div class="md-form mb-2"> 
+                          <h5>User name {{userToTopUp.name}}</h5>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="md-form mb-3">
+                          <label data-error="wrong" data-success="right" for="topUpInput"> <i class="fas fa-phone prefix grey-text"></i>Top Up Amount</label>
+                          <input [(ngModel)]="topUpAmount" name="topUpInput" type="number" id="topUpInput" class="form-control validate" required>
+                        </div>
+                     </div>
+              </fieldset>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-dark">Top Up User</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>

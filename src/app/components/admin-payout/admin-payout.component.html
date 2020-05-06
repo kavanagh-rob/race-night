@@ -1,15 +1,30 @@
+<div class="row">
+    <div class="navButton">
+        <button (click)="navigateToPage('users')" class="btn btn-info topButton" >Users</button>
+    </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('event')" class="btn btn-warning topButton">Event</button>
+    </div> 
+    <div class="navButton">
+      <button (click)="navigateToPage('live-race')" class="btn btn-success topButton" [disabled]="true">Live Race</button>
+  </div> 
+</div>
+<br/>
+<app-live-race-card [eventInfo]="eventInfo"></app-live-race-card>
+<br/>
+
 <h2>Admin Payout Page</h2>
 <div class="row">
-        <div class="navButton">
-            <button class="btn btn-info navLink" routerLink="/admin-page" >Users</button>
-        </div>
-        <div class="navButton">
-            <button class="btn btn-success navLink" routerLink="/admin-submit-results">Set Result</button>
-        </div>
-        <div class="navButton">
-            <button class="btn btn-danger navLink" routerLink="/admin-payout" disabled >Payout</button>
-        </div>    
+    <div class="navButton">
+        <button class="btn btn-info navLink" (click)="navigateToLiveResultsPage('manage')" >Manage</button>
     </div>
+    <div class="navButton">
+        <button class="btn btn-success navLink" (click)="navigateToLiveResultsPage('result')">Set Result</button>
+    </div>
+    <div class="navButton">
+        <button class="btn btn-danger navLink" (click)="navigateToLiveResultsPage('payout')" disabled>Payout</button>
+    </div>    
+</div>
 <br/>
  <h3>Bets for each Race</h3>
  <div *ngFor="let raceNumber of sortRaceList(raceList);">

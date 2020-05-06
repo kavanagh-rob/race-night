@@ -1,0 +1,22 @@
+.raceInfoTable{
+    background-color: lightblue !important;
+}
+
+.currentRace{
+    background-color: #bb9f17 !important;
+    color: white !important;
+}
+
+.navButton {
+    width: 27%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.topButton{
+    width: 100%;
+}
+
+.navLink{
+    width: 100%;
+}

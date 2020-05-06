@@ -3,6 +3,8 @@ import {ActivatedRoute} from '@angular/router';
 import {DataService} from '../../shared/services/data.service';
 import {Router} from '@angular/router';
 import { v1 as uuid } from 'uuid';
+import { User } from '../../models/user';
+import { EventInfo } from '../../models/eventInfo';
 
 
 @Component({
@@ -13,14 +15,16 @@ import { v1 as uuid } from 'uuid';
 export class PlayerHomeComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private dataService: DataService, private router: Router) {
-    const resloveLiveRace = 'resloveLiveRace';
     const resolvedUserKey = 'resolvedPlayer';
+    const resolvedUSerEventKey = 'resolvedUserEvent';
     this.user = this.route.snapshot.data[resolvedUserKey].Item;
-    this.raceInfo = this.route.snapshot.data[resloveLiveRace];
+    this.eventInfo = this.route.snapshot.data[resolvedUSerEventKey].Item;
+    this.liveRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
   }
-  user;
+  user: User;
   interval: any;
-  raceInfo;
+  eventInfo: EventInfo;
+  liveRaceInfo: any = null;
   userBetsList;
   betslip: any = {};
   balanceError = false;
@@ -34,7 +38,7 @@ export class PlayerHomeComponent implements OnInit {
     if (this.user === undefined){
       this.router.navigate(['/pageNotFound']);
     }
-    this.getCurentBetsForRace();
+    this.refreshData();
     this.interval = setInterval(() => {
         this.refreshData();
     }, 12000);
@@ -43,15 +47,18 @@ export class PlayerHomeComponent implements OnInit {
 
 
   refreshData() {
-    this.dataService.getLiveRaceInfo().then(raceInfoData => {
-      this.raceInfo = raceInfoData;
-      this.getCurentBetsForRace();
+    this.dataService.getEventInfo(this.user.eventId).then(eventInfoData => {
+      this.eventInfo = eventInfoData.Item;
+      this.liveRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
+      if (this.liveRaceInfo) {
+        this.getCurentBetsForRace();
+      }
     });
   }
 
   getCurentBetsForRace() {
     const betsQueryData: any = {};
-    betsQueryData.table_name = this.raceInfo.dbBetTableName;
+    betsQueryData.table_name = this.eventInfo.dbBetTableName;
     this.dataService.queryBets(betsQueryData).then(res => {
       this.calculateCurrentOdds(res.Items);
       this.getUserBets(res.Items);
@@ -74,8 +81,8 @@ export class PlayerHomeComponent implements OnInit {
     this.stakeError = false;
     this.raceExpiredError = false;
     this.betslip.result = 'PENDING';
-    this.betslip.meetingId = this.raceInfo.meetingId;
-    this.betslip.raceNumber = this.raceInfo.raceNumber;
+    this.betslip.eventId = this.eventInfo.eventInfoId;
+    this.betslip.raceNumber = this.liveRaceInfo.raceNumber;
     this.betslip.userId = this.user.userId;
     this.betslip.userName = this.user.name;
     this.betslip.userBalance = this.setTwoDecimals(this.user.balance);
@@ -92,9 +99,9 @@ export class PlayerHomeComponent implements OnInit {
         this.balanceError = true;
         return;
       }
-      this.dataService.getLiveRaceInfo().then(raceInfoData => {
-        this.raceInfo = raceInfoData;
-        if (raceInfoData.isActive){
+      this.dataService.getEventInfo(this.user.eventId).then(eventInfoData => {
+        this.liveRaceInfo = eventInfoData.Item.currentRace;
+        if (this.liveRaceInfo.isActive){
           this.placeBet();
         }else{
           this.raceExpiredError = true;
@@ -104,10 +111,10 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   calculateBetTotals(raceBets) {
-    this.raceInfo.horses.forEach(horse => {
+    this.liveRaceInfo.horses.forEach(horse => {
       let betTotalForHorse = 0;
       const betsForHorse = raceBets.filter(
-        bets => bets.horseNumber === horse.number);
+        bets => bets.horseNumber === horse.horseNumber);
       betsForHorse.forEach(betForHorse => {
           betTotalForHorse = betTotalForHorse + Number(betForHorse.stake);
         });
@@ -119,12 +126,12 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   getLiveToteOdds() {
-    const currentHorse = this.raceInfo.horses.forEach(
+    const currentHorse = this.liveRaceInfo.horses.forEach(
       horse => {
         let factoredHorseOdds = horse.totalBetsForHorse === 0 ?
         this.setTwoDecimals(this.totalBetValue) : this.setTwoDecimals(Number(this.totalBetValue) / Number(horse.totalBetsForHorse));
-        if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
-          factoredHorseOdds =   this.setTwoDecimals(factoredHorseOdds * Number(this.raceInfo.payoutFactor));
+        if (this.liveRaceInfo.payoutFactor && this.liveRaceInfo.payoutFactor > 0 && this.liveRaceInfo.payoutFactor < 1) {
+          factoredHorseOdds =   this.setTwoDecimals(factoredHorseOdds * Number(this.liveRaceInfo.payoutFactor));
         }
         horse.liveOdds = factoredHorseOdds;
         });
@@ -136,7 +143,7 @@ export class PlayerHomeComponent implements OnInit {
     this.balanceError = false;
     this.raceExpiredError = false;
     this.stakeError = false;
-    this.betslip.horseNumber = horse.number;
+    this.betslip.horseNumber = horse.horseNumber;
     this.betslip.horseName = horse.name;
   }
 
@@ -154,10 +161,11 @@ export class PlayerHomeComponent implements OnInit {
     // update user balance
     this.dataService.putTableInfo(userData).then(res => {
       const betData: any = {};
-      betData.table_name = this.raceInfo.dbBetTableName;
+      betData.table_name = this.eventInfo.dbBetTableName;
       this.betslip.stake = this.setTwoDecimals(this.betslip.stake);
       betData.item = this.betslip;
       this.betslip.betId = uuid();
+      this.betslip.eventId = this.eventInfo.eventInfoId ;
       // submit bet
       this.dataService.putTableInfo(betData).then(resp => {
         document.getElementById('closeBetFormButton').click();
@@ -169,7 +177,7 @@ export class PlayerHomeComponent implements OnInit {
   filterBetsForRace(betList) {
     return betList.filter(
       betData => {
-        if (betData.meetingId !== this.raceInfo.meetingId || betData.raceNumber !== this.raceInfo.raceNumber) {
+        if (betData.eventId !== this.eventInfo.eventInfoId || betData.raceNumber !== this.liveRaceInfo.raceNumber) {
           return false;
         }
         return true;
@@ -182,6 +190,16 @@ export class PlayerHomeComponent implements OnInit {
       avator = this.user.avatorUrl;
     }
     return { 'background-image': 'url(' + avator + ')' };
+  }
+
+  getRaceCardImage(){
+    return this.liveRaceInfo && this.liveRaceInfo.image && this.liveRaceInfo.image !== 'N/A' ? this.liveRaceInfo.image :
+      'https://i.pinimg.com/originals/42/3c/37/423c375c2e12c1a708ecc1694e472ff1.gif';
+  }
+
+  getRaceCardTitle(){
+    return this.liveRaceInfo && this.liveRaceInfo.image ? 'Race Card' :
+      'Wating On Next Race';
   }
 
   getRaceActiveStyle(isActive){
@@ -229,15 +247,15 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   getPoolPayoutFactor(){
-    if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
-     return Number(this.raceInfo.payoutFactor) * 100;
+    if (this.liveRaceInfo.payoutFactor && this.liveRaceInfo.payoutFactor > 0 && this.liveRaceInfo.payoutFactor < 1) {
+     return Number(this.liveRaceInfo.payoutFactor) * 100;
     }
     return 100;
   }
 
   getWinPot() {
-    if (this.raceInfo.payoutFactor && this.raceInfo.payoutFactor > 0 && this.raceInfo.payoutFactor < 1) {
-      return this.setTwoDecimals(Number(this.raceInfo.payoutFactor) * Number(this.totalBetValue));
+    if (this.liveRaceInfo.payoutFactor && this.liveRaceInfo.payoutFactor > 0 && this.liveRaceInfo.payoutFactor < 1) {
+      return this.setTwoDecimals(Number(this.liveRaceInfo.payoutFactor) * Number(this.totalBetValue));
      }
     return this.totalBetValue;
   }

@@ -1,0 +1,73 @@
+<div class="row">
+    <button data-toggle="modal" data-target="#addRaceForm" class="btn btn-primary offset-md-3 col-md-6">Add races to Event</button>
+</div>
+
+<div class="modal fade" id="addRaceForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h3 class="modal-title w-100 font-weight-bold">Add Race</h3>
+        <button type="button" id="closeAddRaceFormButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <form (ngSubmit)="addRaceToEvent();" class="form-horizontal" #addRaceForm="ngForm">
+             <fieldset>     
+                <div class="form-group">
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="raceNameInput"> <i class="prefix grey-text"></i>Race Name</label>
+                        <input [(ngModel)]="raceInfo.name" name="raceNameInput" type="textbox" id="raceNameInput" class="form-control validate" required>
+                    </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="raceNumberInput"> <i class="prefix grey-text"></i>Race Number</label>
+                        <input [(ngModel)]="raceInfo.raceNumber" name="raceNumberInput" type="number" id="raceNumberInput" class="form-control validate" required>
+                    </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="raceCardImageUrl"> <i class="prefix grey-text"></i>Race Card Image URL</label>
+                        <input [(ngModel)]="raceInfo.raceCardImageUrl" name="raceCardImageUrl" type="textbox" id="raceCardImageUrl" class="form-control validate" required>
+                    </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="racePayoutFactorInput"> <i class="prefix grey-text"></i>Payout Factor (between 0 and 1)</label>
+                        <input [(ngModel)]="raceInfo.payoutFactor" name="racePayoutFactorInput" type="number" id="racePayoutFactorInput" class="form-control validate" required>
+                    </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="showPayoutFactorInput"> <i class="prefix grey-text"></i>Show Payout Factor</label>
+                        <input [(ngModel)]="raceInfo.showPayoutFactor" name="showPayoutFactorInput" type="textbox" id="showPayoutFactorInput" class="form-control validate" required>
+                    </div>
+    
+                     <h3 class="modal-title w-100 font-weight-bold">Horses</h3>
+                     <br/>
+    
+                <div *ngFor="let horse of raceInfo.horses; let i = index;">
+                    <div class="form-group">
+                       <div class="md-form mb-3">
+                           <h6 class="text-center"> Horse {{i+1}} Details </h6>
+                           <div class="row">
+                               <input [(ngModel)]="raceInfo.horses[i].name" placeholder="Enter Name" name="horse-name-{{i + 1}}" type="textbox" id="horse-name-{{i + 1}}" class="col-md-6 horseInput form-control validate" required>
+                               <input [(ngModel)]="raceInfo.horses[i].horseNumber" placeholder="Enter Number" name="horse-number-{{i + 1}}" type="number" id="horse-number-{{i + 1}}" class="col-md-4 horseInput form-control validate" required>
+                               <button type="button" (click)="removeHorse(i)" class="col-md-1 horseInput btn btn-danger">X</button>
+                           </div>
+                           <hr/>
+                       </div>
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <button type="button" (click)="addHorse()" class="btn btn-primary offset-md-3 col-md-6">Add Horse</button>
+                 </div>
+              </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Submit Event</button>
+            </div>
+        </form>
+        <div [hidden]="!formError" class="alert alert-error box-msg warningText" role="alert">
+            <strong>Sorry!</strong> Ther is an error
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</div>

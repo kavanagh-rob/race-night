@@ -1,0 +1,28 @@
+<div *ngIf="eventInfo">
+    <mat-card class="user-card">
+        <mat-card-header class="matHeader"  *ngIf="eventInfo.currentRace">
+            <mat-card-title><span class="helloTxt">Current Race: {{eventInfo.currentRace.raceNumber}}</span></mat-card-title>
+            <mat-card-subtitle>
+                <div class="subText">
+                    <span [style.color]="eventInfo.currentRace.isActive ? 'green': 'red'" class="bettingStat">Betting Status: {{eventInfo.currentRace.isActive ? 'Active': "Suspended"}}</span>
+                </div>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-header class="matHeader"  *ngIf="!eventInfo.currentRace">
+                <mat-card-title><span class="helloTxt">No Current Race Set</span></mat-card-title>
+                <mat-card-subtitle>
+                    <div class="subText">
+                        <span [style.color]="'orange'">Set Current Race in the Event Tab</span>
+                    </div>
+                </mat-card-subtitle>
+            </mat-card-header>
+        <mat-card-content *ngIf="eventInfo.currentRace"> 
+            <div class="card-content-container">
+                <div class="buttonContainer">
+                    <button [hidden]="eventInfo.currentRace.isActive" (click)="activateCurrentRace()" class="btn btn-success">Activate Betting</button>
+                    <button [hidden]="!eventInfo.currentRace.isActive" (click)="suspendCurrentRace()" class="btn btn-danger">Suspend Betting</button>
+                </div>
+            </div>
+            </mat-card-content>
+    </mat-card>
+</div>

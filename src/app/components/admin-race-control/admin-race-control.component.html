@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="navButton">
+        <button (click)="navigateToPage('users')" class="btn btn-info navLink" >Users</button>
+    </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('event')" class="btn btn-warning navLink">Event</button>
+    </div> 
+    <div class="navButton">
+      <button (click)="navigateToPage('live-race')" class="btn btn-success navLink" [disabled]="true">Live Race</button>
+  </div> 
+</div>
+<br/>
+<app-live-race-card [eventInfo]="eventInfo"></app-live-race-card>
+<br/>
+
+<h2>Live Race Admin Page</h2>
+<div class="row">
+    <div class="navButton">
+        <button class="btn btn-info navLink" (click)="navigateToLiveResultsPage('manage')" disabled >Manage</button>
+    </div>
+    <div class="navButton">
+        <button class="btn btn-success navLink" (click)="navigateToLiveResultsPage('result')">Set Result</button>
+    </div>
+    <div class="navButton">
+        <button class="btn btn-danger navLink" (click)="navigateToLiveResultsPage('payout')">Payout</button>
+    </div>    
+</div>
+<br/>
+
+<div class="row">
+    <div class="col-md-5">
+
+    </div>
+    <div class="offset-md-2 col-md-5">
+        
+        </div>
+</div>

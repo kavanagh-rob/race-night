@@ -1,12 +1,11 @@
-:host {         
-    display: block;
-    width: 100%;      
-}
-
 .navButton {
     width: 27%;
     margin-left: 3%;
     margin-right: 3%;
+}
+
+.topButton{
+    width: 100%;
 }
 
 .navLink{

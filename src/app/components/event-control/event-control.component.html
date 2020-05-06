@@ -1,64 +1,164 @@
-<h4>Start Creating your Event</h4>
-
 <div class="row">
-        <button data-toggle="modal" data-target="#createEventForm" (click)="newEventForm()" class="btn btn-primary offset-md-1 col-md-4">Add New Race To Card</button>
-        <div class="col-md-2"></div>
-        <button data-toggle="modal" data-target="#createEventForm" (click)="cloneEventForm()" class="btn btn-primary col-md-4">Clone Previous Race</button>
-     </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('users')" class="btn btn-info navLink" >Users</button>
+    </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('event')" class="btn btn-warning navLink" [disabled]="true">Event</button>
+    </div> 
+    <div class="navButton">
+      <button (click)="navigateToPage('live-race')" class="btn btn-success navLink">Live Race</button>
+  </div> 
+</div>
+<br/>
+<app-live-race-card [eventInfo]="eventInfo"></app-live-race-card>
+<br/>
+
+<div>
+    <h4>Race List</h4>
+    <table class="table hoverTable" *ngIf="eventInfo">
+        <thead>
+            <tr>
+                <th scope="col">Race Number</th>
+                <th scope="col">Race Name</th>
+                <th scope="col">Is Active</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody *ngFor="let race of sortRaceList(eventInfo.races); let i = index">
+            <tr [ngClass]="(eventInfo.currentRace && eventInfo.currentRace.raceId === race.raceId)? 'currentRace': ''">
+                <td (click)="toggleAccordian(i)">{{race.raceNumber}}</td>   
+                <td (click)="toggleAccordian(i)">{{race.name}}</td>
+                <td (click)="toggleAccordian(i)">{{race.isActive}}</td>
+                <td><button (click)="setRaceToEdit(race)" data-toggle="modal" data-target="#editRaceForm"  class="btn btn-primary">Edit Race</button></td>
+                <td><button (click)="removeRace(i)" class="btn btn-danger">Delete Race</button></td>
+                <td [hidden]="eventInfo.currentRace && eventInfo.currentRace.raceId === race.raceId"><button (click)="makeCurrentRace(race)" class="btn btn-success">Make Current Race</button></td>
+                <td [hidden]="!eventInfo.currentRace || !(eventInfo.currentRace.raceId === race.raceId)"><button (click)="clearCurrentRace()" class="btn btn-secondary">Unset Current Race</button></td>
+            </tr>
+            <tr [hidden]="!(accordianOpened === i)" class="race-accordian">
+                <td colspan="6"class="table-cell-text raceInfoTable">
+                    <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Property</th>
+                                    <th scope="col">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>{{race.raceId}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Number</td>
+                                    <td>{{race.raceNumber}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Race Name</td>
+                                    <td>{{race.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Payout Factor</td>
+                                    <td>{{race.payoutFactor}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Show Payout Factor</td>
+                                    <td>{{race.showPayoutFactor}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Race Card URL</td>
+                                    <td>{{race.raceCardImageUrl}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Is Active</td>
+                                    <td>{{race.isActive}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Horse Number</th>
+                                        <th scope="col">Horse Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let horse of race.horses; let j = index">
+                                        <td>{{horse.horseNumber}}</td>
+                                        <td>{{horse.name}}</td>   
+                                    </tr>
+                                </tbody>
+                            </table>
+                </td>    
+                
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<app-add-race [eventInfo]="eventInfo"></app-add-race>
 
 
-<div class="modal fade" id="createEventForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" id="editRaceForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
-        <h3 class="modal-title w-100 font-weight-bold">Setup an Event</h3>
-        <button type="button" id="closeCreateEventFormButton" class="close" data-dismiss="modal" aria-label="Close">
+        <h3 class="modal-title w-100 font-weight-bold">Add Race</h3>
+        <button type="button" id="closeUpdateRaceFormButton" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div>
-            <h4 class="modal-subtitle text-center w-100 font-weight-bold">Enter in Race Details</h4>
-      </div>
       <div class="modal-body mx-3">
-        <form (ngSubmit)="submitEvent();" class="form-horizontal" #eventForm="ngForm">
+        <form (ngSubmit)="updateRaceEvent();" class="form-horizontal" #addRaceForm="ngForm">
              <fieldset>     
-                 <div class="form-group">
+                <div class="form-group">
                     <div class="md-form mb-3">
-                      <label data-error="wrong" data-success="right" for="eventNameInput"> <i class="fas fa-phone prefix grey-text"></i>Name</label>
-                      <input [(ngModel)]="eventInfo.name" name="eventNameInput" type="textbox" id="eventNameInput" class="form-control validate" required>
+                        <label data-error="wrong" data-success="right" for="raceNameInput"> <i class="prefix grey-text"></i>Race Name</label>
+                        <input [(ngModel)]="raceInfo.name" name="raceNameInput" type="textbox" id="raceNameInput" class="form-control validate" required>
                     </div>
-                 </div>
-                 <div class="form-group">
                     <div class="md-form mb-3">
-                      <label data-error="wrong" data-success="right" for="raceCardImageUrl"> <i class="fas fa-phone prefix grey-text"></i>Race Card Image URL</label>
-                      <input [(ngModel)]="eventInfo.raceCardImageUrl" name="raceCardImageUrl" type="textbox" id="raceCardImageUrl" class="form-control validate" required>
+                        <label data-error="wrong" data-success="right" for="raceNumberInput"> <i class="prefix grey-text"></i>Race Number</label>
+                        <input [(ngModel)]="raceInfo.raceNumber" name="raceNumberInput" type="number" id="raceNumberInput" class="form-control validate" required>
                     </div>
-                 </div>
-
-                 <h3 class="modal-title w-100 font-weight-bold">Horses</h3>
-                 <br/>
-
-                 <div class="form-group" *ngFor="let horse of eventInfo.horses; let i = index;">
                     <div class="md-form mb-3">
-                        <h6 class="text-center"> Horse {{i+1}} Details </h6>
-                        <div class="row">
-                            <input [(ngModel)]="eventInfo.horses[i].name" placeholder="Enter Name" name="horse-name-{{i + 1}}" type="textbox" id="horse-name-{{i + 1}}" class="offset-md-1 col-md-4 form-control validate" required>
-                            <div class="col-md-2"></div>
-                            <input [(ngModel)]="eventInfo.horses[i].horseNumber" placeholder="Enter Number" name="horse-number-{{i + 1}}" type="textbox" id="horse-number-{{i + 1}}" class=" col-md-4 form-control validate" required>
-                        </div>
-                        <hr/>
+                        <label data-error="wrong" data-success="right" for="raceCardImageUrl"> <i class="prefix grey-text"></i>Race Card Image URL</label>
+                        <input [(ngModel)]="raceInfo.raceCardImageUrl" name="raceCardImageUrl" type="textbox" id="raceCardImageUrl" class="form-control validate" required>
                     </div>
-                 </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="racePayoutFactorInput"> <i class="prefix grey-text"></i>Payout Factor (between 0 and 1)</label>
+                        <input [(ngModel)]="raceInfo.payoutFactor" name="racePayoutFactorInput" type="number" id="racePayoutFactorInput" class="form-control validate" required>
+                    </div>
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="showPayoutFactorInput"> <i class="prefix grey-text"></i>Show Payout Factor</label>
+                        <input [(ngModel)]="raceInfo.showPayoutFactor" name="showPayoutFactorInput" type="textbox" id="showPayoutFactorInput" class="form-control validate" required>
+                    </div>
+    
+                     <h3 class="modal-title w-100 font-weight-bold">Horses</h3>
+                     <br/>
+    
+                <div *ngFor="let horse of raceInfo.horses; let i = index;">
+                    <div class="form-group">
+                       <div class="md-form mb-3">
+                           <h6 class="text-center"> Horse {{i+1}} Details </h6>
+                           <div class="row">
+                               <input [(ngModel)]="raceInfo.horses[i].name" placeholder="Enter Name" name="horse-name-{{i + 1}}" type="textbox" id="horse-name-{{i + 1}}" class="col-md-6 horseInput form-control validate" required>
+                               <input [(ngModel)]="raceInfo.horses[i].horseNumber" placeholder="Enter Number" name="horse-number-{{i + 1}}" type="number" id="horse-number-{{i + 1}}" class="col-md-4 horseInput form-control validate" required>
+                               <button type="button" (click)="removeHorse(i)" class="col-md-1 horseInput btn btn-danger">X</button>
+                           </div>
+                           <hr/>
+                       </div>
+                    </div>
+                </div>
 
                  <div class="row">
-                    <button (click)="addHorse()" class="btn btn-primary offset-md-1 col-md-4">Add Horse</button>
-                    <div class="col-md-2"></div>
-                    <button (click)="removeHorse()" class="btn btn-danger col-md-4">Remove Horse</button>
+                    <button type="button" (click)="addHorse()" class="btn btn-primary offset-md-3 col-md-6">Add Horse</button>
                  </div>
+              </div>
           </fieldset>
             <div class="modal-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-dark">Submit Event</button>
+                <button type="submit" class="btn btn-dark">Save Changes To Event</button>
             </div>
         </form>
         <div [hidden]="!formError" class="alert alert-error box-msg warningText" role="alert">

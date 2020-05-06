@@ -1,17 +1,32 @@
+<div class="row">
+    <div class="navButton">
+        <button (click)="navigateToPage('users')" class="btn btn-info navLink" >Users</button>
+    </div>
+    <div class="navButton">
+        <button (click)="navigateToPage('event')" class="btn btn-warning navLink">Event</button>
+    </div> 
+    <div class="navButton">
+      <button (click)="navigateToPage('live-race')" class="btn btn-success navLink" [disabled]="true">Live Race</button>
+  </div> 
+</div>
+<br/>
+<app-live-race-card [eventInfo]="eventInfo"></app-live-race-card>
+<br/>
+
 <h2>Admin Set Result Page</h2>
 <div class="row">
-        <div class="navButton">
-            <button class="btn btn-info navLink" routerLink="/admin-page" >Users</button>
-        </div>
-        <div class="navButton">
-            <button class="btn btn-success navLink" routerLink="/admin-submit-results" disabled>Set Result</button>
-        </div>
-        <div class="navButton">
-            <button class="btn btn-danger navLink" routerLink="/admin-payout">Payout</button>
-        </div>    
+    <div class="navButton">
+        <button class="btn btn-info navLink" (click)="navigateToLiveResultsPage('manage')" >Manage</button>
     </div>
+    <div class="navButton">
+        <button class="btn btn-success navLink" (click)="navigateToLiveResultsPage('result')" disabled>Set Result</button>
+    </div>
+    <div class="navButton">
+        <button class="btn btn-danger navLink" (click)="navigateToLiveResultsPage('payout')">Payout</button>
+    </div>    
+</div>
     <br/>
-    <h3>Set Result for Current Race : Race {{raceInfo.raceNumber}}</h3>
+    <h3>Set Result for Current Race : Race {{liveRaceInfo.raceNumber}}</h3>
 <div class="text-center">
     <div [hidden]="!existingResultError" class="box-msg" role="alert">
         <h4 class="warningText"><strong>Warning!</strong> A Result has already been submitted for this race</h4>
@@ -30,8 +45,8 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let horse of raceInfo.horses;" [ngStyle]="highlightRaceWinner(horse.number)">
-            <td>{{horse.number}}</td>
+        <tr *ngFor="let horse of liveRaceInfo.horses;" [ngStyle]="highlightRaceWinner(horse.horseNumber)">
+            <td>{{horse.horseNumber}}</td>
             <td>{{horse.name}}</td>
             <td>{{horse.liveOdds}}</td>
             <td><button (click)="setRaceWinner(horse)" data-toggle="modal" data-target="#setResultForm"  class="btn btn-primary">Set Winner</button></td>
@@ -53,7 +68,7 @@
       <div class="modal-body mx-3">
             <div class="modal-footer d-flex justify-content-center text-center">
                     <h6 class="modal-title w-100 font-weight-bold">Confirm Results</h6>
-                    <h6 class="modal-title w-100 font-weight-bold">Race Number: {{raceInfo.raceNumber}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Race Number: {{liveRaceInfo.raceNumber}}</h6>
                     <h6 class="modal-title w-100 font-weight-bold">Horse Number: {{raceResult.winningHorseNumber}}</h6>
                     <h6 class="modal-title w-100 font-weight-bold">Horse Name: {{raceResult.winningHorseName}}</h6>
                     <h6 class="modal-title w-100 font-weight-bold">Horse Odds: {{raceResult.winningHorseOdds}}</h6>

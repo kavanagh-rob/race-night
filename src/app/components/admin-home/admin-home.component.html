@@ -1,0 +1,23 @@
+<div>
+    <app-create-event></app-create-event>
+    <br/>
+    <h4>Existing Events </h4>
+        <table class="table hoverTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Event Name</th>
+                        <th scope="col">Event Id</th>
+                        <th scope="col">Event Date</th>
+                        <th scope="col">Event Organiser</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let eventInfo of eventInfoList;" (click)="navigateToEvent(eventInfo.eventInfoId)">
+                        <td>{{eventInfo.name}}</td>
+                        <td>{{eventInfo.eventInfoId}}</td>   
+                        <td>{{eventInfo.date}}</td>
+                        <td>{{eventInfo.organiser}}</td>
+                    </tr>
+                </tbody>
+            </table>
+</div>

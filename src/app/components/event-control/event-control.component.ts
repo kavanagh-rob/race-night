@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {DataService} from '../../shared/services/data.service';
 import { EventInfo } from '../../models/eventInfo';
+import { RaceInfo } from '../../models/raceInfo';
 import { Horse } from '../../models/horse';
-import { v1 as uuid } from 'uuid';
+import {Router, ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-event-control',
@@ -11,39 +12,83 @@ import { v1 as uuid } from 'uuid';
 })
 export class EventControlComponent implements OnInit {
 
-  constructor(private dataService: DataService) { }
-  meeting: EventInfo[];
-  eventInfo: EventInfo = new EventInfo();
+  constructor(private dataService: DataService,  private route: ActivatedRoute, private router: Router) {
+    const resolvedEvent = 'resolvedEvent';
+    this.eventInfo = this.route.snapshot.data[resolvedEvent].Item;
+  }
+  eventInfo;
+  raceInfo = new RaceInfo();
+  accordianOpened = -1 ;
+
   formError = false;
-  numberOfHorses: number;
 
   ngOnInit(): void {
   }
 
-  addEventToMeeting() {
-    this.eventInfo.eventNumber = this.meeting.length;
-    this.meeting.push(this.eventInfo);
+
+  sortRaceList(prop: number) {
+    const raceNumberProp = 'raceNumber';
+    return  this.eventInfo.races.sort((a, b) =>
+    a[raceNumberProp] > b[raceNumberProp] ? 1 : a[raceNumberProp] === b[raceNumberProp] ? 0 : -1);
   }
 
-  submitEvent(){
-    // document.getElementById('closeCreateEventFormButton').click();
+  toggleAccordian(index) {
+    this.accordianOpened = this.accordianOpened === index ? -1 : index;
+  }
+
+  setRaceToEdit(raceInfo){
+    this.raceInfo = raceInfo;
+  }
+
+  updateRaceEvent(){
+    this.validateRaceForm();
+    const eventData: any = {};
+    eventData.item = this.eventInfo;
+    eventData.table_name = 'RN_EVENTS';
+    this.dataService.putTableInfo(eventData).then(resp => {
+      document.getElementById('closeUpdateRaceFormButton').click();
+      location.reload();
+     });
+  }
+
+  validateRaceForm(){
+    this.raceInfo.raceCardImageUrl = this.raceInfo.raceCardImageUrl ? this.raceInfo.raceCardImageUrl : 'N/A';
+  }
+
+
+  makeCurrentRace(race){
+    if (confirm('Are you sure to make current race ' + name)) {
+      this.eventInfo.currentRace = race;
+      this.updateRaceEvent();
+    }
+  }
+
+  clearCurrentRace() {
+    delete this.eventInfo.currentRace;
   }
 
   addHorse() {
-    this.eventInfo.horses.push(new Horse());
+    this.raceInfo.horses.push(new Horse());
   }
 
-  removeHorse() {
-    this.eventInfo.horses.splice(-1, 1);
+  removeHorse(index) {
+    this.raceInfo.horses.splice(index, 1);
   }
 
-  newEventForm() {
-    // this.eventInfo = new EventInfo();
+  removeRace(index){
+    if (confirm('Are you sure to delete ' + name)) {
+      this.eventInfo.races.splice(index, 1);
+      this.updateRaceEvent();
+    }
   }
 
-  cloneEventForm() {
-    this.eventInfo = JSON.parse(JSON.stringify(this.eventInfo.eventId));
-    this.eventInfo.eventId = uuid();
+  navigateToPage(route) {
+    this.router.navigate(['../' + route],  {relativeTo: this.route});
   }
+
+  refreshPage(){
+    location.reload();
+  }
+
 
 }
