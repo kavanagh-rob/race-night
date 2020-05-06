@@ -19,7 +19,6 @@ export class PlayerHomeComponent implements OnInit {
     const resolvedUSerEventKey = 'resolvedUserEvent';
     this.user = this.route.snapshot.data[resolvedUserKey].Item;
     this.eventInfo = this.route.snapshot.data[resolvedUSerEventKey].Item;
-    this.liveRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
   }
   user: User;
   interval: any;
@@ -35,6 +34,7 @@ export class PlayerHomeComponent implements OnInit {
   placingbet = false;
 
   ngOnInit(): void {
+    this.liveRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
     if (this.user === undefined){
       this.router.navigate(['/pageNotFound']);
     }
@@ -193,12 +193,12 @@ export class PlayerHomeComponent implements OnInit {
   }
 
   getRaceCardImage(){
-    return this.liveRaceInfo && this.liveRaceInfo.image && this.liveRaceInfo.image !== 'N/A' ? this.liveRaceInfo.image :
-      'https://i.pinimg.com/originals/42/3c/37/423c375c2e12c1a708ecc1694e472ff1.gif';
+    return this.liveRaceInfo && this.liveRaceInfo.raceCardImageUrl && this.liveRaceInfo.raceCardImageUrl !== 'N/A' ?
+    this.liveRaceInfo.raceCardImageUrl : 'https://i.pinimg.com/originals/42/3c/37/423c375c2e12c1a708ecc1694e472ff1.gif';
   }
 
   getRaceCardTitle(){
-    return this.liveRaceInfo && this.liveRaceInfo.image ? 'Race Card' :
+    return this.liveRaceInfo && this.liveRaceInfo.raceCardImageUrl ? 'Race Card' :
       'Wating On Next Race';
   }
 

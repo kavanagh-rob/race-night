@@ -41,7 +41,6 @@ export class EventControlComponent implements OnInit {
   }
 
   updateRaceEvent(){
-    this.validateRaceForm();
     const eventData: any = {};
     eventData.item = this.eventInfo;
     eventData.table_name = 'RN_EVENTS';
@@ -50,11 +49,6 @@ export class EventControlComponent implements OnInit {
       location.reload();
      });
   }
-
-  validateRaceForm(){
-    this.raceInfo.raceCardImageUrl = this.raceInfo.raceCardImageUrl ? this.raceInfo.raceCardImageUrl : 'N/A';
-  }
-
 
   makeCurrentRace(race){
     if (confirm('Are you sure to make current race ' + name)) {
