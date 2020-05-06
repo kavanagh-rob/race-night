@@ -8,7 +8,8 @@ export class RaceInfo {
   public isActive = false;
   public payoutFactor = 1;
   public showPayoutFactor = true;
-  public raceCardImageUrl = '';
+  public raceCardImageUrl = 'N/A';
+  public raceTime = '..soon';
   public horses = [];
     constructor() {  }
   }

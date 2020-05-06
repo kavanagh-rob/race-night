@@ -20,7 +20,6 @@
             <tr>
                 <th scope="col">Race Number</th>
                 <th scope="col">Race Name</th>
-                <th scope="col">Is Active</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -30,7 +29,6 @@
             <tr [ngClass]="(eventInfo.currentRace && eventInfo.currentRace.raceId === race.raceId)? 'currentRace': ''">
                 <td (click)="toggleAccordian(i)">{{race.raceNumber}}</td>   
                 <td (click)="toggleAccordian(i)">{{race.name}}</td>
-                <td (click)="toggleAccordian(i)">{{race.isActive}}</td>
                 <td><button (click)="setRaceToEdit(race)" data-toggle="modal" data-target="#editRaceForm"  class="btn btn-primary">Edit Race</button></td>
                 <td><button (click)="removeRace(i)" class="btn btn-danger">Delete Race</button></td>
                 <td [hidden]="eventInfo.currentRace && eventInfo.currentRace.raceId === race.raceId"><button (click)="makeCurrentRace(race)" class="btn btn-success">Make Current Race</button></td>
@@ -134,7 +132,11 @@
                         <label data-error="wrong" data-success="right" for="showPayoutFactorInput"> <i class="prefix grey-text"></i>Show Payout Factor</label>
                         <input [(ngModel)]="raceInfo.showPayoutFactor" name="showPayoutFactorInput" type="textbox" id="showPayoutFactorInput" class="form-control validate" required>
                     </div>
-    
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="raceTimeInput"> <i class="prefix grey-text"></i>Race Time</label>
+                        <input [(ngModel)]="raceInfo.raceTime" name="raceTimeInput" type="textbox" id="raceTimeInput" class="form-control validate" required>
+                    </div>
+
                      <h3 class="modal-title w-100 font-weight-bold">Horses</h3>
                      <br/>
     

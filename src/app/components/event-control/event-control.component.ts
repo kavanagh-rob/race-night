@@ -65,6 +65,7 @@ export class EventControlComponent implements OnInit {
 
   clearCurrentRace() {
     delete this.eventInfo.currentRace;
+    this.updateRaceEvent();
   }
 
   addHorse() {
