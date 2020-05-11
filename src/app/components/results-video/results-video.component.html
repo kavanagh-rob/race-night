@@ -1,5 +1,5 @@
-<div *ngFor="let result of sortResultsByRace(raceResults); let i = index;">
-    <h3>Results for race {{result.raceInfo.raceNumber}}</h3>
+<div *ngFor="let race of sortFinishedRaces(finishedRaces); let i = index;">
+    <h3>Results for race {{race.raceNumber}}</h3>
     <table class="table hoverTable">
             <thead>
                 <tr>
@@ -10,14 +10,14 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{result.winningHorseNumber}}</td>
-                    <td>{{result.winningHorseName}}</td>
-                    <td>{{result.winningHorseOdds}}</td>
+                    <td>{{race.result.winningHorse.horseNumber}}</td>
+                    <td>{{race.result.winningHorse.name}}</td>
+                    <td>{{race.result.winningHorse.liveOdds}}</td>
                 </tr>
             </tbody>
         </table>
-    <div [hidden]="!result.videoUrl">
+    <div [hidden]="!race.result.videoUrl">
         <h3>Race Replay</h3>
-        <iframe width="100%" height="350px" [src]="result.videoUrl | safe" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="100%" height="350px" [src]="race.result.videoUrl | safe" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 </div>

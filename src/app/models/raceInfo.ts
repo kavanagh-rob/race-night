@@ -10,6 +10,7 @@ export class RaceInfo {
   public showPayoutFactor = true;
   public raceCardImageUrl = 'N/A';
   public raceTime = '..soon';
+  public result = null;
   public horses = [];
     constructor() {  }
   }

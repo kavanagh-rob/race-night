@@ -55,7 +55,7 @@
 </table>
 
 
-<div class="modal fade" id="setResultForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" *ngIf="raceResult" id="setResultForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -68,10 +68,10 @@
       <div class="modal-body mx-3">
             <div class="modal-footer d-flex justify-content-center text-center">
                     <h6 class="modal-title w-100 font-weight-bold">Confirm Results</h6>
-                    <h6 class="modal-title w-100 font-weight-bold">Race Number: {{liveRaceInfo.raceNumber}}</h6>
-                    <h6 class="modal-title w-100 font-weight-bold">Horse Number: {{raceResult.winningHorseNumber}}</h6>
-                    <h6 class="modal-title w-100 font-weight-bold">Horse Name: {{raceResult.winningHorseName}}</h6>
-                    <h6 class="modal-title w-100 font-weight-bold">Horse Odds: {{raceResult.winningHorseOdds}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Race Number: {{raceResult.raceNumber}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Number: {{raceResult.winningHorse.horseNumber}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Name: {{raceResult.winningHorse.name}}</h6>
+                    <h6 class="modal-title w-100 font-weight-bold">Horse Odds: {{raceResult.winningHorse.liveOdds}}</h6>
             </div>
             <form (ngSubmit)="submitRaceResults()" class="form-horizontal" #setResultsForm="ngForm">
              <fieldset>     

@@ -12,33 +12,20 @@ export class ResultsVideoComponent implements OnInit {
   constructor(private dataService: DataService) { }
   @Input()
   eventInfo;
-
-  raceResults = [];
+  finishedRaces;
 
   ngOnInit(): void {
-    this.getSubmittedResults();
+    this.finishedRaces = this.eventInfo.races.filter(
+      race =>  race.result);
   }
 
-  getSubmittedResults() {
-    const resultsRequestData: any = {};
-    resultsRequestData.table_name = this.eventInfo.dbResultTableName;
-    this.dataService.scanTableInfo(resultsRequestData).then(resultsData => {
-      if (resultsData && resultsData.Items){
-        this.raceResults = resultsData.Items.filter(
-          result => result.eventId === this.eventInfo.eventInfoId);
-      }
-    });
-  }
-
-  sortResultsByRace(prop: any) {
-    const raceInfo = 'raceInfo';
+  sortFinishedRaces(prop: any) {
     const raceNumber = 'raceNumber';
-    if (! this.raceResults){
+    if (! this.finishedRaces){
       return;
     }
-    return this.raceResults.sort((a, b) =>
-    a[raceInfo][raceNumber] < b[raceInfo][raceNumber] ? 1 : a[raceInfo][raceNumber] === b[raceInfo][raceNumber] ? 0 : -1);
+    return this.finishedRaces.sort((a, b) =>
+    a[raceNumber] < b[raceNumber] ? 1 : a[raceNumber] === b[raceNumber] ? 0 : -1);
   }
-
 }
 

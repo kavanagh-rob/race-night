@@ -8,7 +8,7 @@ export class EventInfo {
   public organiser = null;
   public date = null;
   public dbBetTableName = 'bets-001';
-  public dbResultTableName = 'rn-results-001';
+  // public dbResultTableName = 'rn-results-001';
   public currentRace: RaceInfo;
   public races = [];
 }

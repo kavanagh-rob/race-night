@@ -19,7 +19,6 @@ export class AdminPayoutComponent implements OnInit {
   allBetsForEvent = [];
   betsToPay = [];
   liveRaceInfo;
-  raceResultsList;
   raceList;
   clicked = false;
   updateBetCalls = [];
@@ -29,18 +28,7 @@ export class AdminPayoutComponent implements OnInit {
 
   ngOnInit() {
     this.liveRaceInfo = this.eventInfo ? this.eventInfo.currentRace : null;
-    this.getSubmittedResults();
-  }
-
-  getSubmittedResults() {
-    const resultsRequestData: any = {};
-    resultsRequestData.table_name = this.eventInfo.dbResultTableName;
-    this.dataService.scanTableInfo(resultsRequestData).then(raceResultsData => {
-      if (raceResultsData && raceResultsData.Items){
-        this.raceResultsList = raceResultsData.Items;
-      }
-      this.loadBetsForEvent();
-    });
+    this.loadBetsForEvent();
   }
 
   loadBetsForEvent() {
@@ -79,7 +67,7 @@ export class AdminPayoutComponent implements OnInit {
 
   getBetResult(raceNumber, horseNumber) {
     const result = this.getResultForRace(raceNumber);
-    const winningHorseNumber = result ? result.winningHorseNumber : null;
+    const winningHorseNumber = result ? result.winningHorse.horseNumber : null;
     if (winningHorseNumber) {
       if (winningHorseNumber === horseNumber){
         return 'WIN';
@@ -93,7 +81,7 @@ export class AdminPayoutComponent implements OnInit {
   processBetsForRace(raceNumber) {
     this.betsToPay = [];
     const raceResult = this.getResultForRace(raceNumber);
-    if (!raceResult || !raceResult.winningHorseNumber || raceResult.eventId !== this.eventInfo.eventInfoId){
+    if (!raceResult || !raceResult.winningHorse){
       return;
     }
     else{
@@ -231,17 +219,21 @@ export class AdminPayoutComponent implements OnInit {
   }
 
   getResultForRace(raceNumber){
-    return this.raceResultsList.filter(
-      result =>  result.raceInfo.raceNumber === raceNumber &&
-        result.eventId === this.eventInfo.eventInfoId)[0];
+    const selectedRace = this.getSelectedRace(raceNumber);
+    return selectedRace ? selectedRace.result : null;
+  }
+
+  getSelectedRace(raceNumber){
+    return this.eventInfo.races.filter(
+      race =>  race.raceNumber === raceNumber)[0];
   }
 
   getHorseOdds(raceNumber, horseNumber){
-    const raceResult = this.getResultForRace(raceNumber);
-    if (!raceResult) {
+    const selectedRace = this.getSelectedRace(raceNumber);
+    if (!selectedRace) {
       return;
     }
-    return raceResult.raceInfo.horses.filter(
+    return selectedRace.horses.filter(
       horse => horse.horseNumber === horseNumber)[0].liveOdds;
   }
 

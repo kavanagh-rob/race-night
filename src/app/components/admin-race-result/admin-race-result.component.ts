@@ -4,6 +4,7 @@ import { v1 as uuid } from 'uuid';
 import { EventInfo } from '../../models/eventInfo';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Route } from '@angular/compiler/src/core';
+import { Result } from '../../models/result';
 
 @Component({
   selector: 'app-race-result',
@@ -20,9 +21,9 @@ export class AdminRaceResultComponent implements OnInit {
 
   liveRaceInfo: any = [{horses: [] }];
   totalBetValue = 0;
-  raceResult: any = {};
+  raceResult: Result;
   raceActiveError = false;
-  resultsForCurrentRace;
+  raceResultError = false;
   existingResultError = false;
 
   ngOnInit(): void {
@@ -31,8 +32,8 @@ export class AdminRaceResultComponent implements OnInit {
 
   getLiveRaceInfo(){
       this.liveRaceInfo = this.eventInfo ? this.eventInfo.currentRace : null;
-      this.getSubmittedResults();
-      this.getCurentBetsForRace();
+      this.raceResult = this.liveRaceInfo ? this.liveRaceInfo.result : null;
+      this.getBets();
   }
 
   navigateToPage(route) {
@@ -43,28 +44,14 @@ export class AdminRaceResultComponent implements OnInit {
     this.router.navigate(['../' + route],  {relativeTo: this.route});
   }
 
-  getSubmittedResults() {
-    const resultsRequestData: any = {};
-    resultsRequestData.table_name = this.eventInfo.dbResultTableName;
-    this.dataService.scanTableInfo(resultsRequestData).then(raceInfoData => {
-      if (raceInfoData && raceInfoData.Items){
-        this.resultsForCurrentRace = raceInfoData.Items.filter(
-          result => result.raceInfo.raceNumber === this.liveRaceInfo.raceNumber);
-        if (this.resultsForCurrentRace.length > 0){
-            this.existingResultError = true;
-        }
-      }
-    });
-  }
-
   highlightRaceWinner(horseNumber){
-    if (this.resultsForCurrentRace && this.resultsForCurrentRace[0]){
-      return horseNumber === this.resultsForCurrentRace[0].winningHorseNumber ? {'background-color': 'green'} : '';
+    if (this.raceResult && this.raceResult.raceNumber === this.eventInfo.currentRace.raceNumber){
+      return horseNumber === this.raceResult.winningHorse.horseNumber ? {'background-color': 'green'} : '';
     }
     return '';
   }
 
-  getCurentBetsForRace() {
+  getBets() {
     const betsQueryData: any = {};
     betsQueryData.table_name = this.eventInfo.dbBetTableName;
     this.dataService.queryBets(betsQueryData).then(res => {
@@ -121,31 +108,53 @@ export class AdminRaceResultComponent implements OnInit {
 
   setRaceWinner(horse) {
     this.raceActiveError = false;
+    this.raceResultError = false;
     if (this.liveRaceInfo.isActive){
       this.raceActiveError = true;
     }
-    this.raceResult.resultId = uuid();
-    this.raceResult.eventId = this.eventInfo.eventInfoId;
-    this.raceResult.winningHorseNumber = horse.horseNumber;
-    this.raceResult.winningHorseName = horse.name;
-    this.raceResult.winningHorseOdds = horse.liveOdds;
-    this.raceResult.raceInfo = this.liveRaceInfo;
+    this.raceResult = new Result(horse, this.liveRaceInfo.raceNumber, this.totalBetValue, this.liveRaceInfo.payoutFactor, null);
+    this.liveRaceInfo.result = this.raceResult;
   }
 
   submitRaceResults() {
     this.raceActiveError = false;
+    this.raceResultError = false;
     if (this.liveRaceInfo.isActive){
       this.raceActiveError = true;
-    } else{
-      const resultData: any = {};
-      resultData.table_name = this.eventInfo.dbResultTableName;
-      resultData.item = this.raceResult;
+    } else {
+      const eventsRequestData: any = {};
+      const eventIdProp = 'eventInfoId';
+      eventsRequestData.primary_key = eventIdProp;
+      eventsRequestData.primary_key_value = this.eventInfo.eventInfoId;
+      eventsRequestData.table_name = 'RN_EVENTS';
 
-      this.dataService.putTableInfo(resultData).then(resp => {
-        document.getElementById('setResultForm').click();
-        location.reload();
+      this.dataService.scanTableInfo(eventsRequestData).then(eventResp => {
+        this.eventInfo = eventResp.Item;
+        if ( !this.eventInfo.currentRace || this.raceResult.raceNumber !== this.eventInfo.currentRace.raceNumber){
+          this.raceResultError = true;
+          return;
+        }
+        this.updateEventWithRaceResult();
+        const eventData: any = {};
+        eventData.item = this.eventInfo;
+        eventData.table_name = 'RN_EVENTS';
+        this.dataService.putTableInfo(eventData).then(resp => {
+          document.getElementById('setResultForm').click();
+          location.reload();
+        });
       });
+
     }
   }
 
+  updateEventWithRaceResult(){
+    const currentRace = this.getCurrentRace();
+    currentRace.result = this.raceResult;
+    this.eventInfo.currentRace = currentRace;
+  }
+
+  getCurrentRace(){
+    return this.eventInfo.races.filter(
+        race => race.raceNumber === this.liveRaceInfo.raceNumber)[0];
+  }
 }
