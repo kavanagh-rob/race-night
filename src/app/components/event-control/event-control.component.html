@@ -104,7 +104,7 @@
     <div class="modal-content">
       <div class="modal-header text-center">
         <h3 class="modal-title w-100 font-weight-bold">Add Race</h3>
-        <button type="button" id="closeUpdateRaceFormButton" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" id="closeUpdateRaceFormButton" (click)="refreshPage()" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -163,8 +163,8 @@
                 <button type="submit" class="btn btn-dark">Save Changes To Event</button>
             </div>
         </form>
-        <div [hidden]="!formError" class="alert alert-error box-msg warningText" role="alert">
-            <strong>Sorry!</strong> Ther is an error
+        <div [hidden]="!duplicateHorseError" class="alert alert-error box-msg warningText" role="alert">
+            <strong>Sorry!</strong> Duplicate Horse Numbers are not allowed
         </div>
       </div>
     

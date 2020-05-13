@@ -6,7 +6,7 @@ export class Result {
       public raceNumber: number,
       public totalPot: number,
       public payoutFactor: number,
-      public videoUrl: string
-
+      public videoUrl: string,
+      public horses: Horse[]
     ) {  }
   }

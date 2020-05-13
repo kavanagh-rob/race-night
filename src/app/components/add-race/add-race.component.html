@@ -67,8 +67,11 @@
                 <button type="submit" class="btn btn-dark">Submit Event</button>
             </div>
         </form>
-        <div [hidden]="!formError" class="alert alert-error box-msg warningText" role="alert">
-            <strong>Sorry!</strong> Ther is an error
+        <div [hidden]="!duplicateHorseError" class="alert alert-error box-msg warningText" role="alert">
+            <strong>Sorry!</strong> Duplicate Horse Numbers are not allowed
+        </div>
+        <div [hidden]="!duplicateRaceError" class="alert alert-error box-msg warningText" role="alert">
+            <strong>ERROR!</strong> Race Number {{raceInfo.raceNumber}} Already Exists
         </div>
       </div>
     

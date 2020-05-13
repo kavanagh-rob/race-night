@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import { v1 as uuid } from 'uuid';
 import { User } from '../../models/user';
 import { EventInfo } from '../../models/eventInfo';
-
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-player-home',
@@ -13,6 +13,7 @@ import { EventInfo } from '../../models/eventInfo';
   styleUrls: ['./player-home.component.css']
 })
 export class PlayerHomeComponent implements OnInit {
+  faLock = faLock;
 
   constructor(private route: ActivatedRoute, private dataService: DataService, private router: Router) {
     const resolvedUserKey = 'resolvedPlayer';

@@ -27,6 +27,7 @@ import { AddRaceComponent } from './components/add-race/add-race.component';
 import { AdminRaceControlComponent } from './components/admin-race-control/admin-race-control.component';
 import { UserControlComponent } from './components/user-control/user-control.component';
 import { LiveRaceCardComponent } from './components/live-race-card/live-race-card.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const appRoutes: Routes = [
   {
@@ -115,7 +116,8 @@ const appRoutes: Routes = [
     FormsModule,
     BrowserAnimationsModule,
     MatTabsModule,
-    MatCardModule
+    MatCardModule,
+    FontAwesomeModule
   ],
   providers: [DataService, PlayerResolver, UserEventResolver, EventsResolver],
   bootstrap: [AppComponent]

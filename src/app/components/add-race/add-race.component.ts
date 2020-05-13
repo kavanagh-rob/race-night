@@ -17,21 +17,49 @@ export class AddRaceComponent implements OnInit {
 
   raceInfo;
 
-  formError = false;
+  duplicateRaceError = false;
+  duplicateHorseError = false;
 
   ngOnInit(): void {
     this.raceInfo = new RaceInfo();
   }
 
   addRaceToEvent() {
-    this.eventInfo.races.push(this.raceInfo);
-    const eventData: any = {};
-    eventData.item = this.eventInfo;
-    eventData.table_name = 'RN_EVENTS';
-    this.dataService.putTableInfo(eventData).then(resp => {
-      document.getElementById('closeAddRaceFormButton').click();
-      location.reload();
-     });
+    this.duplicateRaceError = false;
+    this.duplicateHorseError = false;
+    const eventsRequestData: any = {};
+    eventsRequestData.primary_key = 'eventInfoId';
+    eventsRequestData.primary_key_value = this.eventInfo.eventInfoId;
+    eventsRequestData.table_name = 'RN_EVENTS';
+    this.dataService.scanTableInfo(eventsRequestData).then(eventResp => {
+      this.eventInfo = eventResp.Item;
+      if (!this.eventInfo || this.hasDuplicateRace()) {
+        this.duplicateRaceError = true;
+        return;
+      }
+      if ( this.hasDuplicateHorses()) {
+        this.duplicateRaceError = true;
+        return;
+      }
+      this.eventInfo.races.push(this.raceInfo);
+      const eventData: any = {};
+      eventData.item = this.eventInfo;
+      eventData.table_name = 'RN_EVENTS';
+      this.dataService.putTableInfo(eventData).then(resp => {
+        document.getElementById('closeAddRaceFormButton').click();
+        location.reload();
+       });
+    });
+  }
+
+  hasDuplicateRace() {
+    return this.eventInfo.races.filter(race => race.raceNumber === this.raceInfo.raceNumber).length > 0;
+  }
+  hasDuplicateHorses(){
+    const horseList = new Set();
+    const hasDuplicates = this.raceInfo.horses.some(horse =>
+      horseList.size === horseList.add(horse.horseNumber).size);
+    return hasDuplicates;
   }
 
   addHorse() {

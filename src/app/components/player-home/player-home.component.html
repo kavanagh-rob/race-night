@@ -26,7 +26,15 @@
 <mat-tab-group >
     <mat-tab label="Bet">
             <br/>
-            <h2> Live Odds </h2>
+            <div class="row">
+                <div class="col-8 ">
+                    <h2 [hidden]="!liveRaceInfo.isActive"> Live Odds </h2>
+                    <h2 [hidden]="liveRaceInfo.isActive"> Final Odds </h2>
+                </div>
+                <div  [hidden]="liveRaceInfo.isActive" class="col-4">
+                    <img class="runningGif" src="/assets/images/running.gif" />
+                </div>
+            </div>
             <div *ngIf="liveRaceInfo">
                 <table class="table hoverTable">
                     <thead>
@@ -42,7 +50,10 @@
                             <td>{{horse.horseNumber}}</td>
                             <td>{{horse.name}}</td>
                             <td>{{horse.liveOdds}}</td>
-                            <td><button data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button></td>
+                            <td>
+                                <button [hidden]="!liveRaceInfo.isActive" data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button>
+                                <button  [hidden]="liveRaceInfo.isActive" class="btn btn-warning"><fa-icon [icon]="faLock"></fa-icon></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

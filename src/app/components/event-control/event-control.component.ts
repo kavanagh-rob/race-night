@@ -20,7 +20,7 @@ export class EventControlComponent implements OnInit {
   raceInfo = new RaceInfo();
   accordianOpened = -1 ;
 
-  formError = false;
+  duplicateHorseError = false;
 
   ngOnInit(): void {
   }
@@ -40,14 +40,29 @@ export class EventControlComponent implements OnInit {
     this.raceInfo = raceInfo;
   }
 
-  updateRaceEvent(){
+  updateRaceEvent() {
+    this.duplicateHorseError = false;
+    if ( this.hasDuplicateHorses()) {
+      this.duplicateHorseError = true;
+      return;
+    }
+
     const eventData: any = {};
     eventData.item = this.eventInfo;
     eventData.table_name = 'RN_EVENTS';
     this.dataService.putTableInfo(eventData).then(resp => {
       document.getElementById('closeUpdateRaceFormButton').click();
-      location.reload();
      });
+  }
+
+  hasDuplicateRace() {
+    return this.eventInfo.races.filter(race => race.raceNumber === this.raceInfo.raceNumber).length > 0;
+  }
+  hasDuplicateHorses(){
+    const horseList = new Set();
+    const hasDuplicates = this.raceInfo.horses.some(horse =>
+      horseList.size === horseList.add(horse.horseNumber).size);
+    return hasDuplicates;
   }
 
   makeCurrentRace(race){

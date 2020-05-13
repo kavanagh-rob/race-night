@@ -27,12 +27,22 @@ export class AdminRaceResultComponent implements OnInit {
   existingResultError = false;
 
   ngOnInit(): void {
-    this.getLiveRaceInfo();
+    const eventsRequestData: any = {};
+    eventsRequestData.primary_key = 'eventInfoId';
+    eventsRequestData.primary_key_value = this.eventInfo.eventInfoId;
+    eventsRequestData.table_name = 'RN_EVENTS';
+    this.dataService.scanTableInfo(eventsRequestData).then(eventResp => {
+      this.eventInfo = eventResp.Item;
+      this.getLiveRaceInfo();
+    });
   }
 
   getLiveRaceInfo(){
       this.liveRaceInfo = this.eventInfo ? this.eventInfo.currentRace : null;
-      this.raceResult = this.liveRaceInfo ? this.liveRaceInfo.result : null;
+      this.raceResult = this.liveRaceInfo  ? this.liveRaceInfo.result : null;
+      if (this.raceResult) {
+        this.existingResultError = true;
+      }
       this.getBets();
   }
 
@@ -95,7 +105,7 @@ export class AdminRaceResultComponent implements OnInit {
   filterBetsForRace(betList) {
     return betList.filter(
       betData => {
-        if (betData.meetingId !== this.liveRaceInfo.meetingId || betData.raceNumber !== this.liveRaceInfo.raceNumber) {
+        if (betData.eventId !== this.eventInfo.eventInfoId || betData.raceNumber !== this.liveRaceInfo.raceNumber) {
           return false;
         }
         return true;
@@ -112,7 +122,8 @@ export class AdminRaceResultComponent implements OnInit {
     if (this.liveRaceInfo.isActive){
       this.raceActiveError = true;
     }
-    this.raceResult = new Result(horse, this.liveRaceInfo.raceNumber, this.totalBetValue, this.liveRaceInfo.payoutFactor, null);
+    this.raceResult = new Result(horse, this.liveRaceInfo.raceNumber, this.totalBetValue,
+      this.liveRaceInfo.payoutFactor, null, this.liveRaceInfo.horses );
     this.liveRaceInfo.result = this.raceResult;
   }
 
@@ -127,7 +138,6 @@ export class AdminRaceResultComponent implements OnInit {
       eventsRequestData.primary_key = eventIdProp;
       eventsRequestData.primary_key_value = this.eventInfo.eventInfoId;
       eventsRequestData.table_name = 'RN_EVENTS';
-
       this.dataService.scanTableInfo(eventsRequestData).then(eventResp => {
         this.eventInfo = eventResp.Item;
         if ( !this.eventInfo.currentRace || this.raceResult.raceNumber !== this.eventInfo.currentRace.raceNumber){

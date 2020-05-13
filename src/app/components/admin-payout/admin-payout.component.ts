@@ -79,23 +79,26 @@ export class AdminPayoutComponent implements OnInit {
   }
 
   processBetsForRace(raceNumber) {
-    this.betsToPay = [];
     const raceResult = this.getResultForRace(raceNumber);
-    if (!raceResult || !raceResult.winningHorse){
-      return;
-    }
-    else{
-      const openBetsForRace = this.allBetsForEvent.filter(
-        bet => {
-          let isBetOpen = true;
-          if ( bet.raceNumber !== raceNumber || this.isCompletedBet(bet)) {
-            isBetOpen = false;
-          }
-          return isBetOpen;
-          });
-
-      this.setBetsToPay(openBetsForRace);
-      this.upDateBetJoin();
+    if (confirm('Process Bets for Race ' + raceNumber + ', Winner  (Name: ' +
+    raceResult.winningHorse.name + ', Number ' + raceResult.winningHorse.horseNumber +
+    ', Odds ' + raceResult.winningHorse.liveOdds + ')')) {
+      this.betsToPay = [];
+      if (!raceResult || !raceResult.winningHorse){
+        return;
+      }
+      else{
+        const openBetsForRace = this.allBetsForEvent.filter(
+          bet => {
+            let isBetOpen = true;
+            if ( bet.raceNumber !== raceNumber || this.isCompletedBet(bet)) {
+              isBetOpen = false;
+            }
+            return isBetOpen;
+            });
+        this.setBetsToPay(openBetsForRace);
+        this.upDateBetJoin();
+      }
     }
   }
 
@@ -109,13 +112,9 @@ export class AdminPayoutComponent implements OnInit {
             openBet.paymentStatus = 'PROCESSING';
             this.betsToPay.push(openBet);
         }
-        this.upDateBet(betData);
+        this.updateBetCalls.push(this.dataService.putTableInfo(betData));
     });
    }
-
-   upDateBet(betData){
-    this.updateBetCalls.push(this.dataService.putTableInfo(betData));
-  }
 
   upDateBetJoin(){
     forkJoin(...this.updateBetCalls).subscribe(
@@ -124,7 +123,7 @@ export class AdminPayoutComponent implements OnInit {
         this.getUsersJoin();
 
       }, err => console.log('error ' + err),
-      () => console.log('Ok ')
+      () => console.log('Get Update Bet Ok ')
     );
   }
 
@@ -143,7 +142,7 @@ export class AdminPayoutComponent implements OnInit {
         });
 
       }, err => console.log('error ' + err),
-      () => console.log('Ok ')
+      () => console.log('Get Users Ok ')
     );
   }
 
@@ -195,7 +194,10 @@ export class AdminPayoutComponent implements OnInit {
 
   isCompletedBet(bet){
     let isCompleted = false;
-    if ((bet.isProcessed && bet.result !== 'WIN')){
+    if ((bet.result === 'PENDING')){
+      isCompleted = false;
+    }
+    else if ((bet.isProcessed && bet.result !== 'WIN')){
       isCompleted = true;
     }
     else if (bet.result === 'WIN' && bet.paymentStatus === 'COMPLETE') {
@@ -229,11 +231,11 @@ export class AdminPayoutComponent implements OnInit {
   }
 
   getHorseOdds(raceNumber, horseNumber){
-    const selectedRace = this.getSelectedRace(raceNumber);
-    if (!selectedRace) {
+    const selectedRaceResult = this.getResultForRace(raceNumber);
+    if (!selectedRaceResult) {
       return;
     }
-    return selectedRace.horses.filter(
+    return selectedRaceResult.horses.filter(
       horse => horse.horseNumber === horseNumber)[0].liveOdds;
   }
 
@@ -260,14 +262,20 @@ export class AdminPayoutComponent implements OnInit {
 
   getBetColor(bet) {
     let color = '';
-    if (bet.result === 'WIN' || bet.result === 'LOSE') {
-      color = 'burlywood';
+    if (bet.isProcessed && bet.result === 'LOSE') {
+      color = 'red';
+    }
+    if (!bet.isProcessed && bet.result === 'LOSE') {
+      color = 'lightsalmon';
+    }
+    if (!bet.isProcessed && bet.result === 'WIN' ) {
+      color = 'lightgreen';
     }
     if (bet.paymentStatus && bet.paymentStatus === 'PROCESSING' ) {
       color = 'orange';
     }
     if (bet.paymentStatus && bet.paymentStatus === 'COMPLETE') {
-      color = 'lightgreen';
+      color = 'green';
     }
     return { 'background-color': color };
   }
