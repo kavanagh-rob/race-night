@@ -198,6 +198,10 @@ export class PlayerHomeComponent implements OnInit {
     this.liveRaceInfo.raceCardImageUrl : 'https://i.pinimg.com/originals/42/3c/37/423c375c2e12c1a708ecc1694e472ff1.gif';
   }
 
+  getEventStartCardImage() {
+    return this.eventInfo && this.eventInfo.eventImage ? this.eventInfo.eventImage : '';
+  }
+
   getRaceCardTitle(){
     return this.liveRaceInfo && this.liveRaceInfo.raceCardImageUrl ? 'Race Card' :
       'Wating On Next Race';

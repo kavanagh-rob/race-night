@@ -1,0 +1,117 @@
+body.moving {
+    cursor: move;
+  }
+  
+  .roulette {
+    padding: 40px;
+    background: #1C7022;
+    display: table;
+    position: relative;
+    margin: auto;
+  }
+  
+   
+  .roulette table,
+  tr {
+    border-collapse: collapse;
+
+  }
+  
+  .roulette td {
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: 2px solid white;
+    width: 50px;
+    height: 46px;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    white-space: nowrap;
+  }
+  
+
+  .roulette .sector {
+    background: #1C7022;
+    color: white;
+  }
+  
+  
+  .roulette .num {
+    font-size: 22px;
+  }
+  
+  .vertical {
+    /* display: block;  */
+    /* transform: rotate(270deg); */
+    white-space: nowrap;
+  }
+  
+  .roulette .zero {
+    width: 70px;
+    font-size: 46px;
+  }
+  
+  .roulette .empty {
+    border: none;
+  }
+  
+  /* colors */
+  .roulette .green {
+    background: #1C7022;
+    color: white;
+  }
+  
+  .roulette .red {
+    background: rgb(160, 19, 4);
+    color: white;
+  }
+  
+  .roulette .black {
+    background: rgb(15, 14, 14);
+    color: white;
+  }
+  
+  /* cells hovers */
+  .roulette .sector.hover,
+  .roulette .num.hover {
+    font-size: 26px;
+    -moz-box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
+    -webkit-box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
+    box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
+  }
+  
+  .roulette .sector.hover .vt {
+    font-size: 17px;
+  }
+  
+  .roulette .sector.hover {
+    font-size: 22px;
+    background: #1C9022 !important;
+    color: #FBEC0F !important;
+  }
+  
+  .roulette .green.hover {
+    font-size: 68px;
+    background: #3CC042 !important;
+    color: #FBEC0F !important;
+  }
+  
+  .roulette .red.hover {
+    background: #C00 !important;
+    color: #FBEC0F !important;
+  }
+  
+  .roulette .black.hover {
+    background: #000 !important;
+    color: #FBEC0F !important;
+  }
+  
+  
+  
+  /* others */
+  .hidden {
+    display: none;
+  }
+  

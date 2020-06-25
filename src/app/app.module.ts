@@ -28,6 +28,7 @@ import { AdminRaceControlComponent } from './components/admin-race-control/admin
 import { UserControlComponent } from './components/user-control/user-control.component';
 import { LiveRaceCardComponent } from './components/live-race-card/live-race-card.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouletteBetComponent } from './components/roulette-bet/roulette-bet.component';
 
 const appRoutes: Routes = [
   {
@@ -102,7 +103,8 @@ const appRoutes: Routes = [
     AddRaceComponent,
     AdminRaceControlComponent,
     UserControlComponent,
-    LiveRaceCardComponent
+    LiveRaceCardComponent,
+    RouletteBetComponent
   ],
   imports: [
     RouterModule.forRoot(

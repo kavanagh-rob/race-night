@@ -1,0 +1,107 @@
+<div class="row">  
+        <div class="col-6"><h6>Chip Value €{{chipValue}}</h6></div>
+</div>
+<div class="row">    
+    <div class="roulette col-6">
+        <table>
+            <tr class="nums">
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="num green zero" colspan="3"><span>0</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector vertical" data-sector="7">1 to 18</td>
+                <td rowspan="4" class="sector vertical" data-sector="4">1st 12</td>
+                <td (click)="addNumberBet(1)" [ngStyle]="getSquareStyle(1)" class="num red"><span>1</span></td>
+                <td (click)="addNumberBet(2)" [ngStyle]="getSquareStyle(2)" class="num black"><span>2</span></td>
+                <td (click)="addNumberBet(3)" [ngStyle]="getSquareStyle(3)" class="num red"><span>3</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(4)" [ngStyle]="getSquareStyle(4)" class="num black"><span>4</span></td>
+                <td (click)="addNumberBet(5)" [ngStyle]="getSquareStyle(5)" class="num red"><span>5</span></td>
+                <td (click)="addNumberBet(6)" [ngStyle]="getSquareStyle(6)" class="num black"><span>6</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector vertical" data-sector="7">EVEN</td>
+                <td (click)="addNumberBet(7)" [ngStyle]="getSquareStyle(7)" class="num red"><span>7</span></td>
+                <td (click)="addNumberBet(8)" [ngStyle]="getSquareStyle(8)" class="num black"><span>8</span></td>
+                <td (click)="addNumberBet(9)" [ngStyle]="getSquareStyle(9)" class="num red"><span>9</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(10)" [ngStyle]="getSquareStyle(10)" class="num black"><span>10</span></td>
+                <td (click)="addNumberBet(11)" [ngStyle]="getSquareStyle(11)" class="num black"><span>11</span></td>
+                <td (click)="addNumberBet(12)" [ngStyle]="getSquareStyle(12)" class="num red"><span>12</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector red" data-sector="9">RED</td>
+                <td rowspan="4" class="sector vertical" data-sector="4">2nd 12</td>
+                <td (click)="addNumberBet(13)" [ngStyle]="getSquareStyle(13)" class="num black"><span>13</span></td>
+                <td (click)="addNumberBet(14)" [ngStyle]="getSquareStyle(14)" class="num red"><span>14</span></td>
+                <td (click)="addNumberBet(15)" [ngStyle]="getSquareStyle(15)" class="num black"><span>15</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(16)" [ngStyle]="getSquareStyle(16)" class="num red"><span>16</span></td>
+                <td (click)="addNumberBet(17)" [ngStyle]="getSquareStyle(17)" class="num black"><span>17</span></td>
+                <td (click)="addNumberBet(18)" [ngStyle]="getSquareStyle(18)" class="num red"><span>18</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector black" data-sector="9">BLACK</td>
+                <td (click)="addNumberBet(19)" [ngStyle]="getSquareStyle(19)" class="num red"><span>19</span></td>
+                <td (click)="addNumberBet(20)" [ngStyle]="getSquareStyle(20)" class="num black"><span>20</span></td>
+                <td (click)="addNumberBet(21)" [ngStyle]="getSquareStyle(21)" class="num red"><span>21</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(22)" [ngStyle]="getSquareStyle(22)" class="num black"><span>22</span></td>
+                <td (click)="addNumberBet(23)" [ngStyle]="getSquareStyle(23)" class="num red"><span>23</span></td>
+                <td (click)="addNumberBet(24)" [ngStyle]="getSquareStyle(24)" class="num black"><span>24</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector" data-sector="11">ODD</td>
+                <td rowspan="4" class="sector vertical" data-sector="4">3rd 12</td>
+                <td (click)="addNumberBet(25)" [ngStyle]="getSquareStyle(25)" class="num red"><span>25</span></td>
+                <td (click)="addNumberBet(26)" [ngStyle]="getSquareStyle(26)" class="num black"><span>26</span></td>
+                <td (click)="addNumberBet(27)" [ngStyle]="getSquareStyle(27)" class="num red"><span>27</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(28)" [ngStyle]="getSquareStyle(28)" class="num black"><span>28</span></td>
+                <td (click)="addNumberBet(29)" [ngStyle]="getSquareStyle(39)" class="num black"><span>29</span></td>
+                <td (click)="addNumberBet(30)" [ngStyle]="getSquareStyle(30)" class="num red"><span>30</span></td>
+            </tr>
+            <tr class="nums">
+                <td rowspan="2" class="sector vertical" data-sector="7">19 to 36</td>
+                <td (click)="addNumberBet(31)" [ngStyle]="getSquareStyle(31)" class="num black"><span>31</span></td>
+                <td (click)="addNumberBet(32)" [ngStyle]="getSquareStyle(32)" class="num red"><span>32</span></td>
+                <td (click)="addNumberBet(33)" [ngStyle]="getSquareStyle(33)" class="num black"><span>33</span></td>
+            </tr>
+            <tr class="nums">
+                <td (click)="addNumberBet(34)" [ngStyle]="getSquareStyle(34)" class="num red"><span>34</span></td>
+                <td (click)="addNumberBet(35)" [ngStyle]="getSquareStyle(35)" class="num black"><span>35</span></td>
+                <td (click)="addNumberBet(36)" [ngStyle]="getSquareStyle(36)" class="num red"><span>36</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-6">
+        <table class="table hoverTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Spin Number</th>
+                        <th scope="col">Bet Type</th>
+                        <th scope="col">Bet Value</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let bet of betsForSpin;">
+                        <td>{{bet.spinNumber}}</td>
+                        <td>{{bet.type}}</td>
+                        <td>{{bet.value}}</td>
+                        <td>€{{bet.stake}}</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+          
+</div>

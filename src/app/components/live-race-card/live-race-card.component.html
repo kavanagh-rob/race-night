@@ -19,10 +19,43 @@
         <mat-card-content *ngIf="eventInfo.currentRace"> 
             <div class="card-content-container">
                 <div class="buttonContainer">
+                    <button data-toggle="modal" data-target="#updateRacecardForm" class="mr-3 btn btn-secondary">Update Racecard</button>
                     <button [hidden]="eventInfo.currentRace.isActive" (click)="activateCurrentRace()" class="btn btn-success">Activate Betting</button>
                     <button [hidden]="!eventInfo.currentRace.isActive" (click)="suspendCurrentRace()" class="btn btn-danger">Suspend Betting</button>
                 </div>
             </div>
             </mat-card-content>
     </mat-card>
+</div>`
+
+<div *ngIf="eventInfo.currentRace" class="modal fade" id="updateRacecardForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Update Current Racecard</h4>
+        <button type="button" id="closeSetCurrentRaceCardFormButton" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+            <div class="modal-footer d-flex justify-content-center text-center">
+                    <h6 class="modal-title w-100 font-weight-bold">(New racecard will only apply while race is current)</h6>
+            </div>
+            <form (ngSubmit)="updateRaceEvent()" class="form-horizontal" #setCurrentRaceCardForm="ngForm">
+             <fieldset>     
+                 <div class="form-group">
+                    <div class="md-form mb-3">
+                      <label data-error="wrong" data-success="right" for="currentRacecardUrlInput"> <i class="prefix grey-text"></i>New Racecard Url</label>
+                      <input [(ngModel)]="eventInfo.currentRace.raceCardImageUrl" name="currentRacecardUrlInput" type="textbox" id="currentRacecardUrlInput" class="form-control validate">
+                    </div>
+                 </div>
+          </fieldset>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark">Update Racecard</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

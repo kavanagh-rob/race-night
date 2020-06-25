@@ -23,7 +23,27 @@
     </div>
 </div>
 
-<mat-tab-group >
+<div *ngIf="!liveRaceInfo" class="card-content-container">
+        <h3 [style.color]="'blue'">{{eventInfo.name}}</h3>
+        <img class="racecard-image" [src]="getEventStartCardImage()"/>
+        <br/>
+        <br/>
+        <h5 [style.color]="'darkred'">Make sure you top up your account with your moderator</h5>
+        <img class="racecard-image" src="/assets/images/wallet.gif"/>
+        <br/>
+        <br/>
+        <h4 [style.color]="'darkgreen'">Have Some Fun!!</h4>
+        <img class="racecard-image" src="/assets/images/runner.gif"/>
+        <br/>
+        <br/>
+   </div>
+
+<mat-tab-group *ngIf="liveRaceInfo">
+    <mat-tab label="roulette">
+        <br/>
+        <h2>Roulette Board</h2>
+        <app-roulette-bet></app-roulette-bet>
+    </mat-tab>
     <mat-tab label="Bet">
             <br/>
             <div class="row">

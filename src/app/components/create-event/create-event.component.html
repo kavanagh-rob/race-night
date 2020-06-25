@@ -19,22 +19,29 @@
              <fieldset>     
                 <div class="form-group">
                     <div class="md-form mb-3">
-                        <label data-error="wrong" data-success="right" for="eventNameInput"> <i class="fas fa-phone prefix grey-text"></i>Name Of Event</label>
+                        <label data-error="wrong" data-success="right" for="eventNameInput"> <i class="prefix grey-text"></i>Name Of Event</label>
                         <input [(ngModel)]="eventInfo.name" name="eventNameInput" type="textbox" id="eventNameInput" class="form-control validate" required>
                     </div>
                  </div>
                  <div class="form-group">
                     <div class="md-form mb-3">
-                        <label data-error="wrong" data-success="right" for="eventOrganiserInput"> <i class="fas fa-phone prefix grey-text"></i>Event Organiser</label>
+                        <label data-error="wrong" data-success="right" for="eventOrganiserInput"> <i class="prefix grey-text"></i>Event Organiser</label>
                         <input [(ngModel)]="eventInfo.organiser" name="eventOrganiserInput" type="textbox" id="eventOrganiserInput" class="form-control validate" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="md-form mb-3">
-                        <label data-error="wrong" data-success="right" for="eventDateInput"> <i class="fas fa-phone prefix grey-text"></i>Event Date</label>
+                        <label data-error="wrong" data-success="right" for="eventImageInput"> <i class="prefix grey-text"></i>Event Start Image</label>
+                        <input [(ngModel)]="eventInfo.eventImage" name="eventImageInput" type="textbox" id="eventImageInput" class="form-control validate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="md-form mb-3">
+                        <label data-error="wrong" data-success="right" for="eventDateInput"> <i class="prefix grey-text"></i>Event Date</label>
                         <input [(ngModel)]="eventInfo.date" name="eventDateInput" type="date" id="eventDateInput" class="form-control validate" required>
                     </div>
                 </div>
+
             </fieldset>
             <div [hidden]="!stakeError" class="alert alert-error box-msg warningText" role="alert">
                     <strong>Sorry!</strong> The Stake is too low

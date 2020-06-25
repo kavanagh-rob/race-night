@@ -25,12 +25,13 @@ export class LiveRaceCardComponent implements OnInit {
     this.updateRaceEvent();
   }
 
+
   updateRaceEvent(){
     const eventData: any = {};
     eventData.item = this.eventInfo;
     eventData.table_name = 'RN_EVENTS';
     this.dataService.putTableInfo(eventData).then(resp => {
-      document.getElementById('closeUpdateRaceFormButton').click();
+      document.getElementById('closeSetCurrentRaceCardFormButton').click();
       location.reload();
      });
   }

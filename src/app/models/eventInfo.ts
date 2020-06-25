@@ -4,6 +4,7 @@ import { RaceInfo } from '../models/raceInfo';
 export class EventInfo {
   constructor() { }
   public eventInfoId = uuid();
+  public eventImage = null;
   public name = null;
   public organiser = null;
   public date = null;
