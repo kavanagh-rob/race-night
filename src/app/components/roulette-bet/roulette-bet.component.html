@@ -1,93 +1,219 @@
 <div class="row">  
-        <div class="col-6"><h6>Chip Value €{{chipValue}}</h6></div>
+        <div class="col-6"><h6>Chip Value €{{selectedChipValue}}</h6></div>
+</div>
+<div class="row chipsButtons">  
+    <div  *ngFor="let chip of masterChips;">
+        <div [ngStyle]="getSelectedChipStyle(chip)">
+            <div [ngClass]="getChipClassFromValue(chip)" (click)="selectedChipValue=chip">{{chip}}</div>
+        </div>
+    </div>
+    <div [ngStyle]="getSelectedChipStyle(-1)">
+            <div (click)="selectedChipValue=-1" class="removeChip">X</div>
+        </div>
 </div>
 <div class="row">    
-    <div class="roulette col-6">
-        <table>
+    <div class="roulette col-12 col-m-6">
+        <table class="rouletteTable">
             <tr class="nums">
                 <td class="empty"></td>
                 <td class="empty"></td>
-                <td class="num green zero" colspan="3"><span>0</span></td>
+                <td (click)="addBetForSquare(0)" [ngStyle]="getSquareStyle(0)" class="num green zero" colspan="3">
+                    <span>0</span><div [ngClass]="getChipClass(0)">{{getChipValue(0)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector vertical" data-sector="7">1 to 18</td>
-                <td rowspan="4" class="sector vertical" data-sector="4">1st 12</td>
-                <td (click)="addNumberBet(1)" [ngStyle]="getSquareStyle(1)" class="num red"><span>1</span></td>
-                <td (click)="addNumberBet(2)" [ngStyle]="getSquareStyle(2)" class="num black"><span>2</span></td>
-                <td (click)="addNumberBet(3)" [ngStyle]="getSquareStyle(3)" class="num red"><span>3</span></td>
+                <td rowspan="2" (click)="addBetForSquare('first18')" [ngStyle]="getSquareStyle('first18')" class="">
+                    <span >1 to 18</span><div [ngClass]="getChipClass('first18')">{{getChipValue('first18')}}</div>
+                </td>
+                <td rowspan="4" (click)="addBetForSquare('first12')" [ngStyle]="getSquareStyle('first12')" class="">
+                    <span> 1st 12</span><div [ngClass]="getChipClass('first12')">{{getChipValue('first12')}}</div>
+                </td>
+                <td (click)="addBetForSquare(1)" [ngStyle]="getSquareStyle(1)" class="num red">
+                    <span [hidden]="hasBet(1)">1</span><div [ngClass]="getChipClass(1)">{{getChipValue(1)}}</div>
+                </td>
+                <td (click)="addBetForSquare(2)" [ngStyle]="getSquareStyle(2)" class="num black">
+                    <span [hidden]="hasBet(2)">2</span>
+                    <div [ngClass]="getChipClass(2)">{{getChipValue(2)}}</div>
+                </td>
+                <td (click)="addBetForSquare(3)" [ngStyle]="getSquareStyle(3)" class="num red">
+                    <span [hidden]="hasBet(3)">3</span>
+                    <div [ngClass]="getChipClass(3)">{{getChipValue(3)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(4)" [ngStyle]="getSquareStyle(4)" class="num black"><span>4</span></td>
-                <td (click)="addNumberBet(5)" [ngStyle]="getSquareStyle(5)" class="num red"><span>5</span></td>
-                <td (click)="addNumberBet(6)" [ngStyle]="getSquareStyle(6)" class="num black"><span>6</span></td>
+                <td (click)="addBetForSquare(4)" [ngStyle]="getSquareStyle(4)" class="num black">
+                    <span [hidden]="hasBet(4)">4</span><div [ngClass]="getChipClass(4)">{{getChipValue(4)}}</div>
+                </td>
+                <td (click)="addBetForSquare(5)" [ngStyle]="getSquareStyle(5)" class="num red">
+                    <span [hidden]="hasBet(5)">5</span>
+                    <div [ngClass]="getChipClass(5)">{{getChipValue(5)}}</div>
+                </td>
+                <td (click)="addBetForSquare(6)" [ngStyle]="getSquareStyle(6)" class="num black">
+                    <span [hidden]="hasBet(6)">6</span>
+                    <div [ngClass]="getChipClass(6)">{{getChipValue(6)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector vertical" data-sector="7">EVEN</td>
-                <td (click)="addNumberBet(7)" [ngStyle]="getSquareStyle(7)" class="num red"><span>7</span></td>
-                <td (click)="addNumberBet(8)" [ngStyle]="getSquareStyle(8)" class="num black"><span>8</span></td>
-                <td (click)="addNumberBet(9)" [ngStyle]="getSquareStyle(9)" class="num red"><span>9</span></td>
+                <td rowspan="2" (click)="addBetForSquare('even')" [ngStyle]="getSquareStyle('even')" class="">
+                    <span>EVEN</span><div [ngClass]="getChipClass('even')">{{getChipValue('even')}}</div>
+                </td>
+                <td (click)="addBetForSquare(7)" [ngStyle]="getSquareStyle(7)" class="num red">
+                    <span [hidden]="hasBet(7)">7</span><div [ngClass]="getChipClass(7)">{{getChipValue(7)}}</div>
+                </td>
+                <td (click)="addBetForSquare(8)" [ngStyle]="getSquareStyle(8)" class="num black">
+                    <span [hidden]="hasBet(8)">8</span>
+                    <div [ngClass]="getChipClass(8)">{{getChipValue(8)}}</div>
+                </td>
+                <td (click)="addBetForSquare(9)" [ngStyle]="getSquareStyle(9)" class="num red">
+                    <span [hidden]="hasBet(9)">9</span>
+                    <div [ngClass]="getChipClass(9)">{{getChipValue(9)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(10)" [ngStyle]="getSquareStyle(10)" class="num black"><span>10</span></td>
-                <td (click)="addNumberBet(11)" [ngStyle]="getSquareStyle(11)" class="num black"><span>11</span></td>
-                <td (click)="addNumberBet(12)" [ngStyle]="getSquareStyle(12)" class="num red"><span>12</span></td>
+                <td (click)="addBetForSquare(10)" [ngStyle]="getSquareStyle(10)" class="num black">
+                    <span [hidden]="hasBet(10)">10</span><div [ngClass]="getChipClass(10)">{{getChipValue(10)}}</div>
+                </td>
+                <td (click)="addBetForSquare(11)" [ngStyle]="getSquareStyle(11)" class="num black">
+                    <span [hidden]="hasBet(11)">11</span>
+                    <div [ngClass]="getChipClass(11)">{{getChipValue(11)}}</div>
+                </td>
+                <td (click)="addBetForSquare(12)" [ngStyle]="getSquareStyle(12)" class="num red">
+                    <span [hidden]="hasBet(12)">12</span>
+                    <div [ngClass]="getChipClass(12)">{{getChipValue(12)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector red" data-sector="9">RED</td>
-                <td rowspan="4" class="sector vertical" data-sector="4">2nd 12</td>
-                <td (click)="addNumberBet(13)" [ngStyle]="getSquareStyle(13)" class="num black"><span>13</span></td>
-                <td (click)="addNumberBet(14)" [ngStyle]="getSquareStyle(14)" class="num red"><span>14</span></td>
-                <td (click)="addNumberBet(15)" [ngStyle]="getSquareStyle(15)" class="num black"><span>15</span></td>
+                <td rowspan="2" (click)="addBetForSquare('red')" [ngStyle]="getSquareStyle('red')" class="red">
+                    <span [hidden]="hasBet('red')">RED</span><div [ngClass]="getChipClass('red')">{{getChipValue('red')}}</div>
+                </td>
+                <td rowspan="4" (click)="addBetForSquare('second12')" [ngStyle]="getSquareStyle('second12')" class="">
+                    <span>2nd 12</span><div [ngClass]="getChipClass('second12')">{{getChipValue('second12')}}</div>
+                </td>
+                <td (click)="addBetForSquare(13)" [ngStyle]="getSquareStyle(13)" class="num black">
+                    <span [hidden]="hasBet(13)">13</span><div [ngClass]="getChipClass(13)">{{getChipValue(13)}}</div>
+                </td>
+                <td (click)="addBetForSquare(14)" [ngStyle]="getSquareStyle(14)" class="num red">
+                    <span [hidden]="hasBet(14)">14</span>
+                    <div [ngClass]="getChipClass(14)">{{getChipValue(14)}}</div>
+                </td>
+                <td (click)="addBetForSquare(15)" [ngStyle]="getSquareStyle(15)" class="num black">
+                    <span [hidden]="hasBet(15)">15</span>
+                    <div [ngClass]="getChipClass(15)">{{getChipValue(15)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(16)" [ngStyle]="getSquareStyle(16)" class="num red"><span>16</span></td>
-                <td (click)="addNumberBet(17)" [ngStyle]="getSquareStyle(17)" class="num black"><span>17</span></td>
-                <td (click)="addNumberBet(18)" [ngStyle]="getSquareStyle(18)" class="num red"><span>18</span></td>
+                <td (click)="addBetForSquare(16)" [ngStyle]="getSquareStyle(16)" class="num red">
+                    <span [hidden]="hasBet(16)">16</span><div [ngClass]="getChipClass(16)">{{getChipValue(16)}}</div>
+                </td>
+                <td (click)="addBetForSquare(17)" [ngStyle]="getSquareStyle(17)" class="num black">
+                    <span [hidden]="hasBet(17)">17</span>
+                    <div [ngClass]="getChipClass(17)">{{getChipValue(17)}}</div>
+                </td>
+                <td (click)="addBetForSquare(18)" [ngStyle]="getSquareStyle(18)" class="num red">
+                    <span [hidden]="hasBet(18)">18</span>
+                    <div [ngClass]="getChipClass(18)">{{getChipValue(18)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector black" data-sector="9">BLACK</td>
-                <td (click)="addNumberBet(19)" [ngStyle]="getSquareStyle(19)" class="num red"><span>19</span></td>
-                <td (click)="addNumberBet(20)" [ngStyle]="getSquareStyle(20)" class="num black"><span>20</span></td>
-                <td (click)="addNumberBet(21)" [ngStyle]="getSquareStyle(21)" class="num red"><span>21</span></td>
+                <td rowspan="2" (click)="addBetForSquare('black')" [ngStyle]="getSquareStyle('black')" class="black">
+                    <span [hidden]="hasBet('black')">BLACK</span><div [ngClass]="getChipClass('black')">{{getChipValue('black')}}</div>
+                </td>
+                <td (click)="addBetForSquare(19)" [ngStyle]="getSquareStyle(19)" class="num red">
+                    <span [hidden]="hasBet(19)">19</span><div [ngClass]="getChipClass(19)">{{getChipValue(19)}}</div>
+                </td>
+                <td (click)="addBetForSquare(20)" [ngStyle]="getSquareStyle(20)" class="num black">
+                    <span [hidden]="hasBet(20)">20</span>
+                    <div [ngClass]="getChipClass(20)">{{getChipValue(20)}}</div>
+                </td>
+                <td (click)="addBetForSquare(21)" [ngStyle]="getSquareStyle(21)" class="num red">
+                    <span [hidden]="hasBet(21)">21</span>
+                    <div [ngClass]="getChipClass(21)">{{getChipValue(21)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(22)" [ngStyle]="getSquareStyle(22)" class="num black"><span>22</span></td>
-                <td (click)="addNumberBet(23)" [ngStyle]="getSquareStyle(23)" class="num red"><span>23</span></td>
-                <td (click)="addNumberBet(24)" [ngStyle]="getSquareStyle(24)" class="num black"><span>24</span></td>
+                <td (click)="addBetForSquare(22)" [ngStyle]="getSquareStyle(22)" class="num black">
+                    <span [hidden]="hasBet(22)">22</span><div [ngClass]="getChipClass(22)">{{getChipValue(22)}}</div>
+                </td>
+                <td (click)="addBetForSquare(23)" [ngStyle]="getSquareStyle(23)" class="num red">
+                    <span [hidden]="hasBet(23)">23</span>
+                    <div [ngClass]="getChipClass(23)">{{getChipValue(23)}}</div>
+                </td>
+                <td (click)="addBetForSquare(24)" [ngStyle]="getSquareStyle(24)" class="num black">
+                    <span [hidden]="hasBet(24)">24</span>
+                    <div [ngClass]="getChipClass(24)">{{getChipValue(24)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector" data-sector="11">ODD</td>
-                <td rowspan="4" class="sector vertical" data-sector="4">3rd 12</td>
-                <td (click)="addNumberBet(25)" [ngStyle]="getSquareStyle(25)" class="num red"><span>25</span></td>
-                <td (click)="addNumberBet(26)" [ngStyle]="getSquareStyle(26)" class="num black"><span>26</span></td>
-                <td (click)="addNumberBet(27)" [ngStyle]="getSquareStyle(27)" class="num red"><span>27</span></td>
+                <td rowspan="2" (click)="addBetForSquare('odd')" [ngStyle]="getSquareStyle('odd')" class="">
+                    <span>ODD</span><div [ngClass]="getChipClass('odd')">{{getChipValue('odd')}}</div>
+                </td>
+                <td rowspan="4" (click)="addBetForSquare('third12')" [ngStyle]="getSquareStyle('third12')" class="">
+                    <span>3rd 12</span><div [ngClass]="getChipClass('third12')">{{getChipValue('third12')}}</div>
+                </td>   
+                <td (click)="addBetForSquare(25)" [ngStyle]="getSquareStyle(25)" class="num red">
+                    <span [hidden]="hasBet(25)">25</span><div [ngClass]="getChipClass(25)">{{getChipValue(25)}}</div>
+                </td>
+                <td (click)="addBetForSquare(26)" [ngStyle]="getSquareStyle(26)" class="num black">
+                    <span [hidden]="hasBet(26)">26</span>
+                    <div [ngClass]="getChipClass(26)">{{getChipValue(26)}}</div>
+                </td>
+                <td (click)="addBetForSquare(27)" [ngStyle]="getSquareStyle(27)" class="num red">
+                    <span [hidden]="hasBet(27)">27</span>
+                    <div [ngClass]="getChipClass(27)">{{getChipValue(27)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(28)" [ngStyle]="getSquareStyle(28)" class="num black"><span>28</span></td>
-                <td (click)="addNumberBet(29)" [ngStyle]="getSquareStyle(39)" class="num black"><span>29</span></td>
-                <td (click)="addNumberBet(30)" [ngStyle]="getSquareStyle(30)" class="num red"><span>30</span></td>
+                <td (click)="addBetForSquare(28)" [ngStyle]="getSquareStyle(28)" class="num black">
+                    <span [hidden]="hasBet(28)">28</span><div [ngClass]="getChipClass(28)">{{getChipValue(28)}}</div>
+                </td>
+                <td (click)="addBetForSquare(29)" [ngStyle]="getSquareStyle(29)" class="num black">
+                    <span [hidden]="hasBet(29)">29</span>
+                    <div [ngClass]="getChipClass(29)">{{getChipValue(29)}}</div>
+                </td>
+                <td (click)="addBetForSquare(30)" [ngStyle]="getSquareStyle(30)" class="num red">
+                    <span [hidden]="hasBet(30)">30</span>
+                    <div [ngClass]="getChipClass(30)">{{getChipValue(30)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td rowspan="2" class="sector vertical" data-sector="7">19 to 36</td>
-                <td (click)="addNumberBet(31)" [ngStyle]="getSquareStyle(31)" class="num black"><span>31</span></td>
-                <td (click)="addNumberBet(32)" [ngStyle]="getSquareStyle(32)" class="num red"><span>32</span></td>
-                <td (click)="addNumberBet(33)" [ngStyle]="getSquareStyle(33)" class="num black"><span>33</span></td>
+                <td rowspan="2" (click)="addBetForSquare('second18')" [ngStyle]="getSquareStyle('second18')" class="">
+                    <span>19 to 36</span><div [ngClass]="getChipClass('second18')">{{getChipValue('second18')}}</div>
+                </td>
+                <td (click)="addBetForSquare(31)" [ngStyle]="getSquareStyle(31)" class="num black">
+                    <span [hidden]="hasBet(31)">31</span><div [ngClass]="getChipClass(31)">{{getChipValue(31)}}</div>
+                </td>
+                <td (click)="addBetForSquare(32)" [ngStyle]="getSquareStyle(32)" class="num red">
+                    <span [hidden]="hasBet(32)">32</span>
+                    <div [ngClass]="getChipClass(32)">{{getChipValue(32)}}</div>
+                </td>
+                <td (click)="addBetForSquare(33)" [ngStyle]="getSquareStyle(33)" class="num black">
+                    <span [hidden]="hasBet(33)">33</span>
+                    <div [ngClass]="getChipClass(33)">{{getChipValue(33)}}</div>
+                </td>
             </tr>
             <tr class="nums">
-                <td (click)="addNumberBet(34)" [ngStyle]="getSquareStyle(34)" class="num red"><span>34</span></td>
-                <td (click)="addNumberBet(35)" [ngStyle]="getSquareStyle(35)" class="num black"><span>35</span></td>
-                <td (click)="addNumberBet(36)" [ngStyle]="getSquareStyle(36)" class="num red"><span>36</span></td>
+                <td (click)="addBetForSquare(34)" [ngStyle]="getSquareStyle(34)" class="num red">
+                    <span [hidden]="hasBet(34)">34</span><div [ngClass]="getChipClass(34)">{{getChipValue(34)}}</div>
+                </td>
+                <td (click)="addBetForSquare(35)" [ngStyle]="getSquareStyle(35)" class="num black">
+                    <span [hidden]="hasBet(35)">35</span>
+                    <div [ngClass]="getChipClass(35)">{{getChipValue(35)}}</div>
+                </td>
+                <td (click)="addBetForSquare(36)" [ngStyle]="getSquareStyle(36)" class="num red">
+                    <span [hidden]="hasBet(36)">36</span>
+                    <div [ngClass]="getChipClass(36)">{{getChipValue(36)}}</div>
+                </td>
             </tr>
         </table>
     </div>
 
-    <div class="col-6">
+    <div class="col-12 col-m-6">
         <table class="table hoverTable">
                 <thead>
                     <tr>
                         <th scope="col">Spin Number</th>
                         <th scope="col">Bet Type</th>
-                        <th scope="col">Bet Value</th>
+                        <th scope="col">Bet Odds</th>
                         <th scope="col">Amount</th>
                         <th scope="col"></th>
                     </tr>
@@ -95,10 +221,10 @@
                 <tbody>
                     <tr *ngFor="let bet of betsForSpin;">
                         <td>{{bet.spinNumber}}</td>
-                        <td>{{bet.type}}</td>
-                        <td>{{bet.value}}</td>
+                        <td>{{bet.squareId}}</td>
+                        <td>{{bet.odds}}</td>
                         <td>€{{bet.stake}}</td>
-                        <td></td>
+                        <td><button type="submit" (click)="removeBetsForSquare(bet.squareId)" class="btn btn-dark">x</button></td>
                     </tr>
                 </tbody>
             </table>

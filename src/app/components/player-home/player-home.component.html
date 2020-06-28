@@ -11,133 +11,137 @@
                 </mat-card-subtitle>
              </mat-card-header>
              <mat-card-content> 
-                 <div *ngIf="liveRaceInfo" class="card-content-container">
-                     <h5>Current Race: <strong>Race  {{liveRaceInfo.raceNumber}}</strong></h5>
-                     <h6 class="startTxt">(Starting at: <strong>  {{liveRaceInfo.raceTime}}</strong>)</h6>
+                 <div *ngIf="liveHorseRaceInfo" class="card-content-container">
+                     <h5>Current Race: <strong>Race  {{liveHorseRaceInfo.raceNumber}}</strong></h5>
+                     <h6 class="startTxt">(Starting at: <strong>  {{liveHorseRaceInfo.raceTime}}</strong>)</h6>
                      <h5>Win Pot: <strong>€{{getWinPot()}}</strong></h5>
-                     <h6 [hidden]="!liveRaceInfo.showPayoutFactor">(Tote Returns : <strong> {{ getPoolPayoutFactor()}}%)</strong></h6>
-                     <h5>Betting Status: <span [ngStyle]="getRaceActiveStyle(liveRaceInfo.isActive)">{{liveRaceInfo.isActive ? 'Active' : 'Suspended' }}</span></h5>
+                     <h6 [hidden]="!liveHorseRaceInfo.showPayoutFactor">(Tote Returns : <strong> {{ getPoolPayoutFactor()}}%)</strong></h6>
+                     <h5>Betting Status: <span [ngStyle]="getRaceActiveStyle(liveHorseRaceInfo.isActive)">{{liveHorseRaceInfo.isActive ? 'Active' : 'Suspended' }}</span></h5>
                  </div>
+                 <div *ngIf="nextRouletteGameInfo" class="card-content-container">
+                    <h5>Next Spin: <strong>{{nextRouletteGameInfo.spinNumber}}</strong></h5>
+                    <h5>Betting Status: <span [ngStyle]="getRaceActiveStyle(nextRouletteGameInfo.isActive)">{{nextRouletteGameInfo.isActive ? 'Active' : 'Suspended' }}</span></h5>
+                </div>
                 </mat-card-content>
          </mat-card>
     </div>
 </div>
 
-<div *ngIf="!liveRaceInfo" class="card-content-container">
-        <h3 [style.color]="'blue'">{{eventInfo.name}}</h3>
-        <img class="racecard-image" [src]="getEventStartCardImage()"/>
-        <br/>
-        <br/>
-        <h5 [style.color]="'darkred'">Make sure you top up your account with your moderator</h5>
-        <img class="racecard-image" src="/assets/images/wallet.gif"/>
-        <br/>
-        <br/>
-        <h4 [style.color]="'darkgreen'">Have Some Fun!!</h4>
-        <img class="racecard-image" src="/assets/images/runner.gif"/>
-        <br/>
-        <br/>
-   </div>
+<div *ngIf="!liveHorseRaceInfo && !nextRouletteGameInfo" class="card-content-container">
+    <h3 [style.color]="'blue'">{{eventInfo.name}}</h3>
+    <img class="racecard-image" [src]="getEventStartCardImage()"/>
+    <br/>
+    <br/>
+    <h5 [style.color]="'darkred'">Make sure you top up your account with your moderator</h5>
+    <img class="racecard-image" src="/assets/images/wallet.gif"/>
+    <br/>
+    <br/>
+    <h4 [style.color]="'darkgreen'">Have Some Fun!!</h4>
+    <img class="racecard-image" src="/assets/images/runner.gif"/>
+    <br/>
+    <br/>
+</div>
 
-<mat-tab-group *ngIf="liveRaceInfo">
-    <mat-tab label="roulette">
+<mat-tab-group *ngIf="liveHorseRaceInfo || nextRouletteGameInfo">
+    <mat-tab *ngIf="nextRouletteGameInfo" label="Roulette">
         <br/>
         <h2>Roulette Board</h2>
-        <app-roulette-bet></app-roulette-bet>
+        <app-roulette-bet [eventInfo]="eventInfo"></app-roulette-bet>
     </mat-tab>
-    <mat-tab label="Bet">
-            <br/>
-            <div class="row">
-                <div class="col-8 ">
-                    <h2 [hidden]="!liveRaceInfo.isActive"> Live Odds </h2>
-                    <h2 [hidden]="liveRaceInfo.isActive"> Final Odds </h2>
-                </div>
-                <div  [hidden]="liveRaceInfo.isActive" class="col-4">
-                    <img class="runningGif" src="/assets/images/running.gif" />
-                </div>
+    <mat-tab *ngIf="liveHorseRaceInfo" label="Bet">
+        <br/>
+        <div class="row">
+            <div class="col-8 ">
+                <h2 [hidden]="!liveHorseRaceInfo.isActive"> Live Odds </h2>
+                <h2 [hidden]="liveHorseRaceInfo.isActive"> Final Odds </h2>
             </div>
-            <div *ngIf="liveRaceInfo">
-                <table class="table hoverTable">
-                    <thead>
-                        <tr>
-                            <th scope="col">Horse Number</th>
-                            <th scope="col">Horse Name</th>
-                            <th scope="col">Return per €</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let horse of liveRaceInfo.horses;">
-                            <td>{{horse.horseNumber}}</td>
-                            <td>{{horse.name}}</td>
-                            <td>{{horse.liveOdds}}</td>
-                            <td>
-                                <button [hidden]="!liveRaceInfo.isActive" data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button>
-                                <button  [hidden]="liveRaceInfo.isActive" class="btn btn-warning"><fa-icon [icon]="faLock"></fa-icon></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div  [hidden]="liveHorseRaceInfo.isActive" class="col-4">
+                <img class="runningGif" src="/assets/images/running.gif" />
             </div>
-            <div *ngIf="!liveRaceInfo" class="card-content-container">
-                    <h5><strong>No Live Races</strong></h5>
-                </div>
-    </mat-tab>
-    <mat-tab label="History">
-            <br/>
-            <h2> Top Ups </h2>
+        </div>
+        <div *ngIf="liveHorseRaceInfo">
             <table class="table hoverTable">
-                    <thead>
-                        <tr>
-                            <th scope="col">User Name</th>
-                            <th scope="col">User ID</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let payment of user.payments;">
-                            <td>{{user.name}}</td>
-                            <td>{{user.userId}}</td>
-                            <td>{{payment.date}}</td>
-                            <td [ngStyle]="{color: 'green'}">€{{payment.amount}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br/>
-                <h2> Bets </h2>
-                <table class="table hoverTable">
-                        <thead>
-                            <tr>
-                                <th scope="col">Race Number</th>
-                                <th scope="col">Horse Name</th>
-                                <th scope="col">Horse Number</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Result</th>
-                                <th scope="col">SP</th>
-                                <th scope="col">Return</th>
-                                <th scope="col">Payment</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let bet of sortBetByRace(userBetsList);" [ngStyle]="getBetColor(bet)">
-                                <td>{{bet.raceNumber}}</td>
-                                <td>{{bet.horseName}}</td>
-                                <td>{{bet.horseNumber}}</td>
-                                <td>€{{bet.stake}}</td>
-                                <td>{{bet.result}}</td>
-                                <td>{{bet.finalOdds}}</td>
-                                <td>€{{bet.payout}}</td>
-                                <td>{{bet.paymentStatus}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <thead>
+                    <tr>
+                        <th scope="col">Horse Number</th>
+                        <th scope="col">Horse Name</th>
+                        <th scope="col">Return per €</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let horse of liveHorseRaceInfo.horses;">
+                        <td>{{horse.horseNumber}}</td>
+                        <td>{{horse.name}}</td>
+                        <td>{{horse.liveOdds}}</td>
+                        <td>
+                            <button [hidden]="!liveHorseRaceInfo.isActive" data-toggle="modal" data-target="#placeBetForm" (click)="setSelectedHorse(horse)" class="btn btn-primary">Bet</button>
+                            <button  [hidden]="liveHorseRaceInfo.isActive" class="btn btn-warning"><fa-icon [icon]="faLock"></fa-icon></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!liveHorseRaceInfo" class="card-content-container">
+            <h5><strong>No Live Races</strong></h5>
+        </div>
     </mat-tab>
-    <mat-tab label="Card">
+    <mat-tab *ngIf="liveHorseRaceInfo" label="History">
+<br/>
+<h2> Top Ups </h2>
+<table class="table hoverTable">
+        <thead>
+            <tr>
+                <th scope="col">User Name</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let payment of user.payments;">
+                <td>{{user.name}}</td>
+                <td>{{user.userId}}</td>
+                <td>{{payment.date}}</td>
+                <td [ngStyle]="{color: 'green'}">€{{payment.amount}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <h2> Bets </h2>
+    <table class="table hoverTable">
+            <thead>
+                <tr>
+                    <th scope="col">Race Number</th>
+                    <th scope="col">Horse Name</th>
+                    <th scope="col">Horse Number</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Result</th>
+                    <th scope="col">SP</th>
+                    <th scope="col">Return</th>
+                    <th scope="col">Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let bet of sortBetByRace(userBetsList);" [ngStyle]="getBetColor(bet)">
+                    <td>{{bet.raceNumber}}</td>
+                    <td>{{bet.horseName}}</td>
+                    <td>{{bet.horseNumber}}</td>
+                    <td>€{{bet.stake}}</td>
+                    <td>{{bet.result}}</td>
+                    <td>{{bet.finalOdds}}</td>
+                    <td>€{{bet.payout}}</td>
+                    <td>{{bet.paymentStatus}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-tab>
+    <mat-tab *ngIf="liveHorseRaceInfo" label="Card">
             <br/>
             <h2>{{getRaceCardTitle()}}</h2>
         <img class="racecard-image" [src]="getRaceCardImage()"/>
     </mat-tab>
-    <mat-tab label="Results">
+    <mat-tab *ngIf="liveHorseRaceInfo" label="Results">
         <br/>
         <h2>Race Results</h2>
         <app-results-video [eventInfo]="eventInfo"></app-results-video>

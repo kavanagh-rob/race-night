@@ -3,11 +3,20 @@ body.moving {
   }
   
   .roulette {
-    padding: 40px;
+    padding: 22px;
     background: #1C7022;
     display: table;
     position: relative;
     margin: auto;
+  }
+
+  .rouletteTable {
+      margin: auto;
+  }
+
+  .chipsButtons {
+      margin-left: 15px;
+      margin-bottom: 20px;
   }
   
    
@@ -21,8 +30,8 @@ body.moving {
     border-spacing: 0;
     border-collapse: collapse;
     border: 2px solid white;
-    width: 50px;
-    height: 46px;
+    width: 70px;
+    height: 70px;
     text-align: center;
     vertical-align: middle;
     font-weight: bold;
@@ -37,17 +46,10 @@ body.moving {
     color: white;
   }
   
-  
   .roulette .num {
     font-size: 22px;
   }
-  
-  .vertical {
-    /* display: block;  */
-    /* transform: rotate(270deg); */
-    white-space: nowrap;
-  }
-  
+    
   .roulette .zero {
     width: 70px;
     font-size: 46px;
@@ -73,40 +75,7 @@ body.moving {
     color: white;
   }
   
-  /* cells hovers */
-  .roulette .sector.hover,
-  .roulette .num.hover {
-    font-size: 26px;
-    -moz-box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
-    -webkit-box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
-    box-shadow: inset 0 0 5px #FFF, inset 0 0 5px #FFF;
-  }
-  
-  .roulette .sector.hover .vt {
-    font-size: 17px;
-  }
-  
-  .roulette .sector.hover {
-    font-size: 22px;
-    background: #1C9022 !important;
-    color: #FBEC0F !important;
-  }
-  
-  .roulette .green.hover {
-    font-size: 68px;
-    background: #3CC042 !important;
-    color: #FBEC0F !important;
-  }
-  
-  .roulette .red.hover {
-    background: #C00 !important;
-    color: #FBEC0F !important;
-  }
-  
-  .roulette .black.hover {
-    background: #000 !important;
-    color: #FBEC0F !important;
-  }
+
   
   
   
@@ -114,4 +83,121 @@ body.moving {
   .hidden {
     display: none;
   }
+
+
+ .chip1,
+ .chip2,
+ .chip3,
+ .chip4,
+ .chip5,
+ .chip6,
+ .chip7,
+ .chip8,
+ .chip9,
+ .chip10,
+ .chip11,
+ .chip12,
+ .chip13,
+ .removeChip
+  {
+    position: relative;
+    top: 8px;
+    left: 8px;
+    float: left;
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 35px;
+    text-align: center;
+    color: #393;
+    background: #FFF;
+    border: 0.3333333333rem dashed #393;
+    border-radius: 5rem;
+    transition: all linear 0.2s;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+    margin: 0 1rem 1rem 0;
+  }
+  .removeChip{
+    color: black;
+    background:#e20909;
+    border-color: black;
+    font-size: 1.2rem;
+}
+  .chip1 {
+    color: #393;
+    background: #FFF;
+    border-color: #393;
+  }
   
+  .chip2 {
+    color: #fff;
+    background: #CC0;
+    border-color: #fff;
+  }
+  
+  .chip3 {
+    color: #fff;
+    background: #C33;
+    border-color: #fff;
+  }
+  
+  .chip4 {
+    color: #fff;
+    background: #44F;
+    border-color: #fff;
+  }
+  
+  .chip5 {
+    color: #fff;
+    background: #666;
+    border-color: #fff;
+  }
+  
+  .chip6 {
+    color: #fff;
+    background: #393;
+    border-color: #fff;
+  }
+  
+  .chip7 {
+    color: #fff;
+    background: #D80;
+    border-color: #fff;
+  }
+  
+  .chip8 {
+    color: #fff;
+    background: #000;
+    border-color: #fff;
+  }
+  
+  .chip9 {
+    color: #fff;
+    background: #F99;
+    border-color: #fff;
+  }
+  
+  .chip10 {
+    color: #fff;
+    background: #D9D;
+    border-color: #fff;
+  }
+  
+  .chip11 {
+    color: #fff;
+    background: #812;
+    border-color: #fff;
+  }
+  
+  .chip12 {
+    color: #fff;
+    background: #9CC;
+    border-color: #fff;
+  }
+  
+  .chip13 {
+    color: #fff;
+    background: #622;
+    border-color: #fff;
+  }

@@ -3,8 +3,9 @@ export class RouletteBet {
     constructor(
       public userId: string,
       public spinNumber: number,
-      public type: string,
-      public value: number,
-      public stake: number
+      public squareId: number,
+      public stake: number,
+      public selectedNumbers: number[],
+      public odds: number
     ) {  }
   }
