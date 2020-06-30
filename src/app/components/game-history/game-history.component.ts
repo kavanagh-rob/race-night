@@ -51,7 +51,7 @@ export class GameHistoryComponent implements OnInit {
   }
 
   getBetType(bet){
-    return typeof bet.squareId === 'number' ? 'Single on [' + bet.squareId + ']' : bet.squareId.toUpperCase();
+    return typeof bet.squareId === 'number' ? bet.squareId + ' (single)' : bet.squareId.toUpperCase();
   }
 
   getBetColor(bet){
@@ -76,6 +76,10 @@ export class GameHistoryComponent implements OnInit {
 
   toggleAccordian(index) {
     this.accordianOpened = this.accordianOpened === index ? -1 : index;
+  }
+
+  setTwoDecimals(input){
+    return Number((Math.round(Number(input) * 100) / 100).toFixed(2));
   }
 
 

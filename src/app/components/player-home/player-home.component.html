@@ -43,9 +43,7 @@
 </div>
 
 <mat-tab-group *ngIf="liveHorseRaceInfo || nextRouletteGameInfo">
-    <mat-tab *ngIf="nextRouletteGameInfo" label="Roulette">
-        <br/>
-        <h2>Roulette Board</h2>
+    <mat-tab *ngIf="nextRouletteGameInfo" label="Roulette Board">
         <app-roulette-bet [eventInfo]="eventInfo"></app-roulette-bet>
     </mat-tab>
     <mat-tab *ngIf="nextRouletteGameInfo" label="Bet Hisory">

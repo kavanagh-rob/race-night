@@ -39,8 +39,8 @@
                             <th scope="col">Bet Type</th>
                             <th scope="col">Stake</th>
                             <th scope="col">Odds</th>
+                            <th scope="col">Returns</th>
                             <th scope="col">Result</th>
-                            <th scope="col">Return</th>
                             <th scope="col">Payment Status</th>
                         </tr>
                     </thead>
@@ -49,8 +49,8 @@
                             <td>{{getBetType(bet)}}</td>
                             <td>{{bet.stake}}</td>
                             <td>{{bet.odds}}-1</td>
+                            <td>€{{setTwoDecimals(bet.stake*(bet.odds+1))}}</td>
                             <td>{{bet.result}}</td>
-                            <td>€{{bet.payout}}</td>
                             <td>{{bet.paymentStatus}}</td>
                         </tr>
                     </tbody>

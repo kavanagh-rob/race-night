@@ -1,3 +1,7 @@
+<div class="row chipsButtons mt-2">
+        <div class="col-6"><h4>Chip Value <strong>€{{selectedChipValue}}</strong></h4></div>
+        <div class="col-6"><h4>Working Balance <strong>€{{getWorkingBalance()}}</strong></h4></div>
+</div>
 <div class="row  mx-0 mb-2">  
     <div class="navButton col-4 ml-0">
             <button (click)="clearStagedBets()" [disabled]="!hasBetsInProgress()" class="btn btn-warning topButton">Clear Staged</button>
@@ -8,7 +12,7 @@
     <div class="navButton col-4  mr-0">
         <button (click)="submitBets()" [disabled]="!hasBetsInProgress()"  class="btn btn-primary topButton">Place Bets</button>
     </div> 
-</div>
+</div> 
 <div class="row chipsButtons">  
     <div  *ngFor="let chip of masterChips;">
         <div [ngStyle]="getSelectedChipStyle(chip)">
@@ -18,8 +22,7 @@
     <div [ngStyle]="getSelectedChipStyle(-1)">
         <div (click)="selectedChipValue=-1" class="removeChip">X</div>
     </div>
-    <div class="col-3"><h6>Chip Value €{{selectedChipValue}}</h6></div>
-    <div class="col-3"><h6>Working Balance €{{getWorkingBalance()}}</h6></div>
+    
 </div>
 <div [hidden]="!hasBetsInProgress()" class="infoText" role="alert">
     <strong>You have staged bets!</strong> <br><span>Place them before the next Spin</span>
