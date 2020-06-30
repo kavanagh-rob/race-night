@@ -21,6 +21,7 @@ export class PlayerHomeComponent implements OnInit {
     this.user = this.route.snapshot.data[resolvedUserKey].Item;
     this.eventInfo = this.route.snapshot.data[resolvedUSerEventKey].Item;
   }
+
   user: User;
   interval: any;
   eventInfo: EventInfo;
@@ -38,12 +39,7 @@ export class PlayerHomeComponent implements OnInit {
 
 
   ngOnInit(): void {
-    if (this.eventInfo  && this.eventInfo.currentGame && this.eventInfo.currentGame.gameType === 'roulette'){
-      this.nextRouletteGameInfo = this.eventInfo.currentGame;
-    }
-    else {
-      this.liveHorseRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
-    }
+    this.setCurrentGameInfo();
 
     if (this.user === undefined){
       this.router.navigate(['/pageNotFound']);
@@ -54,19 +50,28 @@ export class PlayerHomeComponent implements OnInit {
     }, 12000);
   }
 
+  setCurrentGameInfo() {
+    if (this.eventInfo  && this.eventInfo.currentGame && this.eventInfo.currentGame.gameType === 'roulette'){
+      this.nextRouletteGameInfo = this.eventInfo.currentGame;
+    }
+    else {
+      this.liveHorseRaceInfo =  this.eventInfo ? this.eventInfo.currentRace : null;
+    }
+  }
+
 
 
   refreshData() {
     this.dataService.getEventInfo(this.user.eventId).then(eventInfoData => {
       this.eventInfo = eventInfoData.Item;
-      this.liveHorseRaceInfo =  this.eventInfo.currentRace  ? this.eventInfo.currentRace : null;
+      this.setCurrentGameInfo();
       if (this.liveHorseRaceInfo) {
-        this.getCurentBetsForRace();
+        this.getCurrentBetsForRace();
       }
     });
   }
 
-  getCurentBetsForRace() {
+  getCurrentBetsForRace() {
     const betsQueryData: any = {};
     betsQueryData.table_name = this.eventInfo.dbBetTableName;
     this.dataService.queryBets(betsQueryData).then(res => {
@@ -216,7 +221,7 @@ export class PlayerHomeComponent implements OnInit {
       'Wating On Next Race';
   }
 
-  getRaceActiveStyle(isActive){
+  getGameStatusStyle(isActive){
     let actColor = '';
     if (isActive){
       actColor = 'blue';

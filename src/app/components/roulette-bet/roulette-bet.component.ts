@@ -15,16 +15,16 @@ import { EventInfo } from '../../models/eventInfo';
 export class RouletteBetComponent implements OnInit {
   @Input()
   eventInfo;
-
-  betsForSpin: RouletteBet[] = [];
-  spinNumber = 1;
+  existingBetslipForGame;
+  inProgressBetsForSpin: RouletteBet[] = [];
   masterChips = [ 0.5, 1, 2, 5, 10, 25 ];
   selectedChipValue = this.masterChips[0];
   user;
-  betslip;
+  betslip: any = {};
   balanceError;
   liveGameInfo;
   gameExpiredError = false;
+  userSyncError = false;
 
   constructor(private route: ActivatedRoute, private dataService: DataService, private router: Router) {
     const resolvedUserKey = 'resolvedPlayer';
@@ -32,18 +32,94 @@ export class RouletteBetComponent implements OnInit {
     this.user = this.route.snapshot.data[resolvedUserKey].Item;
   }
 
+  hasBetsInProgress(){
+    return ((this.inProgressBetsForSpin.length > 0) && !this.existingBetslipForGame) ||
+      (this.existingBetslipForGame &&
+       !this.compareArrays(this.existingBetslipForGame.betsForGame, this.inProgressBetsForSpin));
+  }
 
-  ngOnInit(): void {}
+  compareArrays(array1, array2){
+    return array1.length === array2.length && array1.sort().every((value, index) => value === array2[index]);
+  }
 
-  requestBet(){
-    this.dataService.getUserById(this.user.userId).then(res => {
-      this.user = res.Item;
-      if ( Number(this.user.balance) < Number(this.betslip.stake)) {
+
+  ngOnInit(): void {
+    if (this.eventInfo.currentGame.masterChipValues) {
+      this.masterChips = this.eventInfo.currentGame.masterChipValues;
+    }
+    this.loadExistingBetsForSpin();
+  }
+
+  loadExistingBetsForSpin(){
+    const betsQueryData: any = {};
+    betsQueryData.table_name = this.eventInfo.dbBetTableName;
+    this.dataService.queryBets(betsQueryData).then(res => {
+      this.existingBetslipForGame = this.filterBetsForGame(res.Items)[0];
+      // clone bets to all new bets
+      this.inProgressBetsForSpin =  this.existingBetslipForGame && this.existingBetslipForGame.betsForGame ?
+        [... this.existingBetslipForGame.betsForGame] : [];
+    });
+  }
+
+  getWorkingBalance(){
+    let workingBalance = Number(this.user.balance) - Number(this.getTotalStake(this.inProgressBetsForSpin));
+    if (this.existingBetslipForGame) {
+      workingBalance = workingBalance + Number(this.getTotalStake(this.existingBetslipForGame.betsForGame));
+    }
+    return workingBalance;
+  }
+
+  filterBetsForGame(betList){
+    return betList.filter(
+      bet => bet.userId === this.user.userId &&
+        bet.eventId === this.eventInfo.eventInfoId &&
+        bet.gameId === this.eventInfo.currentGame.gameId);
+  }
+
+  clearStagedBets() {
+    location.reload();
+  }
+
+  clearBets(){
+    if (!this.eventInfo.currentGame.isActive || !this.isAllBetsForCurrentGame(this.existingBetslipForGame.betsForGame)){
+      alert('This game is no longer active, your submitted bets cannot be removed');
+      location.reload();
+      return;
+    }
+    if (confirm('This will clear all bets for this spinn including already submitted bets')) {
+          this.inProgressBetsForSpin = [];
+
+          if (this.existingBetslipForGame) {
+            this.returnExistingBetBalance();
+          }
+      }
+  }
+
+  requestBets(){
+    this.balanceError = false;
+    if (!this.eventInfo.currentGame.isActive || !this.isAllBetsForCurrentGame(this.inProgressBetsForSpin)){
+      alert('Sorry this game is no longer active, your unsubmitted bets will be reset');
+      location.reload();
+      return;
+    }
+    this.dataService.getUserById(this.user.userId).then(userRes => {
+      if (this.user.balance !== userRes.Item.balance){
+        this.userSyncError = true;
+        alert('Error placing bet user data was not up to date, try again after page reloads');
+        location.reload();
+        return;
+      }
+      this.user = userRes.Item;
+
+      if ( this.getWorkingBalance() < 0) {
         this.balanceError = true;
         return;
       }
+
+      this.user.balance = this.getWorkingBalance();
+
       this.dataService.getEventInfo(this.user.eventId).then(eventInfoData => {
-        this.liveGameInfo = eventInfoData.Item.liveSpinInfo;
+        this.liveGameInfo = eventInfoData.Item.currentGame;
         if (this.liveGameInfo.isActive){
           this.placeBet();
         }else{
@@ -53,24 +129,66 @@ export class RouletteBetComponent implements OnInit {
     });
   }
 
-  placeBet() {
+  returnExistingBetBalance() {
     const userData: any = {};
-    this.user.balance = Number(this.user.balance) - Number(this.betslip.stake);
+    this.user.balance = Number(this.user.balance) + Number(this.getTotalStake(this.existingBetslipForGame.betsForGame));
     this.user.balance = this.setTwoDecimals(this.user.balance);
     userData.item = this.user;
     userData.table_name = 'RN_Users';
 
-    // update user balance
+    // update user balance and clear existing bets
     this.dataService.putTableInfo(userData).then(res => {
       const betData: any = {};
       betData.table_name = this.eventInfo.dbBetTableName;
-      this.betslip.stake = this.setTwoDecimals(this.betslip.stake);
+      this.existingBetslipForGame.betsForGame = [];
+      betData.item = this.existingBetslipForGame;
+      // submit bet
+      this.dataService.putTableInfo(betData).then(resp => {
+        // document.getElementById('closeBetFormButton').click();
+        location.reload();
+      });
+    });
+  }
+
+  isAllBetsForCurrentGame(betList){
+    return betList.filter(
+      betData => {
+        if (betData.gameId !== this.eventInfo.currentGame.gameId ) {
+          return false;
+        }
+        return true;
+    }).length === 0;
+  }
+
+  getTotalStake(betList){
+    return Number(betList.reduce((prev, current) => prev + current.stake, 0));
+  }
+
+  submitBets() {
+    if (confirm('Confirm you want to set the bets for this spin, this will overwrite any previous bets placed')) {
+      this.requestBets();
+    }
+  }
+
+  placeBet() {
+    const userData: any = {};
+    userData.item = this.user;
+    userData.table_name = 'RN_Users';
+
+    this.dataService.putTableInfo(userData).then(res => {
+      const betData: any = {};
+      betData.table_name = this.eventInfo.dbBetTableName;
+      this.betslip.betsForGame = this.inProgressBetsForSpin;
+      this.betslip.gameType = 'roulette';
+      this.betslip.spinNumber = this.eventInfo.currentGame.spinNumber;
+      this.betslip.userId = this.user.userId;
+      this.betslip.gameId = this.eventInfo.currentGame.gameId;
       betData.item = this.betslip;
-      this.betslip.betId = uuid();
+      this.betslip.betId = this.existingBetslipForGame ? this.existingBetslipForGame.betId : uuid();
       this.betslip.eventId = this.eventInfo.eventInfoId ;
       // submit bet
       this.dataService.putTableInfo(betData).then(resp => {
-        document.getElementById('closeBetFormButton').click();
+        // document.getElementById('closeBetFormButton').click();
         location.reload();
       });
     });
@@ -78,15 +196,21 @@ export class RouletteBetComponent implements OnInit {
 
 
   addBetForSquare(squareId){
+    this.balanceError = false;
     if (this.selectedChipValue === -1){
       this.removeBetsForSquare(squareId);
+      return;
+    }
+    if (this.getWorkingBalance() - this.selectedChipValue < 0){
+      this.balanceError = true;
       return;
     }
     const existingBet = this.getBetsForSquare(squareId)[0];
     if (existingBet){
       existingBet.stake = existingBet.stake + this.selectedChipValue;
     }else{
-      this.betsForSpin.push(new RouletteBet('rob', this.spinNumber, squareId,  this.selectedChipValue,
+      this.inProgressBetsForSpin.push(
+        new RouletteBet('rob', this.eventInfo.currentGame.spinNumber, squareId,  this.selectedChipValue,
         this.getSelectedNumberForBet(squareId), this.getOddsForBet(squareId)));
     }
   }
@@ -110,19 +234,28 @@ export class RouletteBetComponent implements OnInit {
         case 'black':
           selectedOdds = 1;
           break;
-        case 'first18':
+        case 'first_18':
           selectedOdds = 1;
           break;
-        case 'second18':
+        case 'second_18':
           selectedOdds = 1;
           break;
-        case 'first12':
+        case 'first_12':
           selectedOdds = 2;
           break;
-        case 'second12':
+        case 'second_12':
           selectedOdds = 2;
           break;
-        case 'third12':
+        case 'third_12':
+          selectedOdds = 2;
+          break;
+        case 'first_column':
+          selectedOdds = 2;
+          break;
+        case 'second_column':
+          selectedOdds = 2;
+          break;
+        case 'third_column':
           selectedOdds = 2;
           break;
       }
@@ -149,37 +282,33 @@ export class RouletteBetComponent implements OnInit {
         case 'black':
           selectedNumbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
           break;
-        case 'first18':
+        case 'first_18':
           selectedNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
           break;
-        case 'second18':
+        case 'second_18':
           selectedNumbers = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36];
           break;
-        case 'first12':
+        case 'first_12':
           selectedNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
           break;
-        case 'second12':
+        case 'second_12':
           selectedNumbers = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
           break;
-        case 'third12':
+        case 'third_12':
           selectedNumbers = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36];
+          break;
+        case 'first_column':
+          selectedNumbers = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
+          break;
+        case 'second_column':
+          selectedNumbers = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35];
+          break;
+        case 'third_column':
+          selectedNumbers = [3, 6, 9, 12, 15, 18, 21, 24, 26, 30, 33, 36];
           break;
       }
     }
     return selectedNumbers;
-  }
-
-  addNumberBet(squareId) {
-    if (this.selectedChipValue === -1){
-      this.removeBetsForSquare(squareId);
-      return;
-    }
-    const existingBet = this.getBetsForSquare(squareId)[0];
-    if (existingBet){
-      existingBet.stake = existingBet.stake + this.selectedChipValue;
-    }else{
-      this.betsForSpin.push(new RouletteBet('rob', this.spinNumber, squareId,  this.selectedChipValue, [squareId], 35));
-    }
   }
 
 
@@ -261,17 +390,17 @@ export class RouletteBetComponent implements OnInit {
   }
 
   hasBet(squareId){
-    return this.betsForSpin.filter(
+    return this.inProgressBetsForSpin.filter(
       betData => betData.squareId === squareId).length > 0;
   }
 
   getBetsForSquare(squareId){
-    return this.betsForSpin.filter(
+    return this.inProgressBetsForSpin.filter(
       betData => betData.squareId === squareId);
   }
 
   removeBetsForSquare(squareId){
-    this.betsForSpin = this.betsForSpin.filter(
+    this.inProgressBetsForSpin = this.inProgressBetsForSpin.filter(
         betData => betData.squareId !== squareId);
   }
 

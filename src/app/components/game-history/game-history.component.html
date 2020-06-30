@@ -1,0 +1,61 @@
+<h2> Top Ups </h2>
+<table class="table hoverTable">
+    <thead>
+        <tr>
+            <th scope="col">User Name</th>
+            <th scope="col">User ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let payment of user.payments;">
+            <td>{{user.name}}</td>
+            <td>{{user.userId}}</td>
+            <td>{{payment.date}}</td>
+            <td [ngStyle]="{color: 'green'}">€{{payment.amount}}</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+<h2> Bets </h2>
+<table class="table hoverTable">
+    <thead>
+        <tr>
+            <th scope="col">Spin Number</th>
+            <th scope="col">Number of Bets</th>
+        </tr>
+    </thead>
+    <tbody  *ngFor="let betslip of sortBets(userBetsList);let i = index">
+        <tr (click)="toggleAccordian(i)">
+            <td>{{betslip.spinNumber}}</td>
+            <td>{{betslip.betsForGame.length}}</td>
+        </tr>
+        <tr [hidden]="!(accordianOpened === i)" class="">
+            <td colspan="2" class="table-cell-text">
+                <table class="table hoverTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Bet Type</th>
+                            <th scope="col">Stake</th>
+                            <th scope="col">Odds</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Return</th>
+                            <th scope="col">Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let bet of betslip.betsForGame;" [ngStyle]="getBetColor(bet)">
+                            <td>{{getBetType(bet)}}</td>
+                            <td>{{bet.stake}}</td>
+                            <td>{{bet.odds}}-1</td>
+                            <td>{{bet.result}}</td>
+                            <td>€{{bet.payout}}</td>
+                            <td>{{bet.paymentStatus}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>

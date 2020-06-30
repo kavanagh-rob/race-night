@@ -1,7 +1,26 @@
 body.moving {
     cursor: move;
   }
-  
+
+  .infoText {
+    text-align: center;
+    background-color: greenyellow;
+    color: mediumblue;
+  }
+
+  .warningText {
+    background: bisque;
+  }
+
+  .navButton {
+      padding: 0;
+  }
+
+  .topButton {
+    font-size: .98em;
+    width: 95%;
+}
+
   .roulette {
     padding: 22px;
     background: #1C7022;
@@ -74,10 +93,7 @@ body.moving {
     background: rgb(15, 14, 14);
     color: white;
   }
-  
-
-  
-  
+   
   
   /* others */
   .hidden {
